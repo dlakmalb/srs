@@ -1,0 +1,39 @@
+
+.textTransparent
+{
+	background-color:transparent;
+	color:#FFFFFF;
+}
+
+.textBorder
+{
+	border-color:#00BFFF;
+	border-width:1px;
+	border-style:solid;
+}
+
+.vcenter 
+{
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+    top:200px;
+}
+
+.bootstrap-datetimepicker-widget 
+{ 
+	color:black!important;
+}
+
+body
+{
+    padding-top: 70px;
+}
+
+.navfooter
+{
+    text-align: center;
+    vertical-align: middle;
+    background-color: transparent;
+    color: #00BFFF;
+}
