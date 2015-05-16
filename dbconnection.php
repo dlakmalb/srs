@@ -2,7 +2,7 @@
 	$servername="localhost";
 	$username="root";
 	$password="";
-	$dbname="customer_complaint_db";
+	$dbname="student_registration_db";
 	
 	session_start();
 	
@@ -14,6 +14,6 @@
 	}
 	//echo "Connected successfully";
 	
-	//$conn->close();
-        //date_default_timezone_set('Asia/Colombo');
+	$conn->close();
+        date_default_timezone_set('Asia/Colombo');
 ?> 
