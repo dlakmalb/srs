@@ -2,6 +2,18 @@
 require_once("dbconnection.php");
 require_once("header.php");
 ?> 
+<?php
+mysql_select_db('student_registration_db');
+
+$sql = "SELECT 
+            student_id,
+            name,
+            field,
+            nic
+        FROM students";
+
+$result = $conn->query($sql);
+?>
 <!DOCTYPE html>
 <html>
     <?php add_head() ?>
@@ -108,26 +120,21 @@ require_once("header.php");
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>211068611</td>
-                                <td>B.A.D.L.Bulathsinghala</td>
-                                <td>Electrical and Computer Engineering</td>
-                                <td>910034103v</td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>edit</a></td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>delete</a></td>
-                            </tr>
-                            <tr>
-                                <td>711068901</td>
-                                <td>H.A.M.C.W.Hewawitharana</td>
-                                <td>Electrical and Computer Engineering</td>
-                                <td>900044103v</td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>edit</a></td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>delete</a></td>
-                            </tr>
-                        </tbody>
 
+                        <?php
+                        while ($row = mysqli_fetch_array($result, MYSQLI_BOTH)) {
+                            echo "<tr>";
 
+                            echo "<td>" . $row['student_id'] . "</td>";
+                            echo "<td>" . $row['name'] . "</td>";
+                            echo "<td>" . $row['field'] . "</td>";
+                            echo "<td>" . $row['nic'] . "</td>";
+                            echo "<td> <a href=''>edit</a></td>";
+                            echo "<td> <a href=''>delete</a></td>";
+
+                            echo "</tr>";
+                        }
+                        ?>
 
                     </table>
                 </div> 

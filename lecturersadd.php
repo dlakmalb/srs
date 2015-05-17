@@ -2,6 +2,35 @@
 require_once("dbconnection.php");
 require_once("header.php");
 ?>
+<?php
+// get user inputs
+if (isset($_POST['register'])):
+    $id = ($_POST['inputlecid']);
+    $salutation = ($_POST['selectsalutation']);
+    $name = ($_POST['inputlecname']);
+    $address = ($_POST['inputaddress']);
+    $Gender = ($_POST['radiogender']);
+    $nic = ($_POST['inputnic']);
+    $birthday = ($_POST['datetimepicker']);
+    $Telephone = ($_POST['inputtelephone']);
+    $email = ($_POST['inputemail']);
+    $dept = ($_POST['inputdept']);
+    $Password = ($_POST['inputpassword']);
+
+    $sql = "INSERT INTO lecturers (lecturer_id, salutation, name, birthday, nic, gender, address, telephone, email, department, password)
+            VALUES('" . $id . "', '" . $salutation . "', '" . $name . "', '" . $birthday . "', '" . $nic . "', '" . $Gender . "',  '" . $address . "', '" . $Telephone . "', '" . $email . "', '" . $dept . "', '" . $Password . "')";
+
+    $result = $conn->query($sql);
+    if ($result && $conn->affected_rows > 0) {
+        header("Location: lecturers.php");
+        exit;
+    } else {
+        echo '<script language = "javascript">';
+        echo 'alert("Lecturer Already Exist")';
+        echo '</script>';
+    }
+endif;
+?>
 <!DOCTYPE html>
 <html>
     <?php add_head() ?>
@@ -22,14 +51,14 @@ require_once("header.php");
                             <form class="form-horizontal" action="" method="POST">
                                 <fieldset>
                                     <div class="form-group">
-                                        <label for="labellecid" class="col-lg-3 control-label">Lecturer ID</label>
+                                        <label for="inputlecid" class="col-lg-3 control-label">Lecturer ID</label>
                                         <div class="col-lg-9">
                                             <input required='required' class="form-control input-sm textBorder" id="inputlecid" name="inputlecid" placeholder="Lecturer ID" type="text">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div>
-                                            <label for="labelsalutation" class="col-md-3 control-label">Salutation</label>
+                                            <label for="selectsalutation" class="col-md-3 control-label">Salutation</label>
                                         </div>
                                         <div class="col-md-9">
                                             <select class="form-control input-sm textBorder" id="selectsalutation" name="selectsalutation">
@@ -40,69 +69,69 @@ require_once("header.php");
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="labellecname" class="col-lg-3 control-label">Lecturer Name</label>
+                                        <label for="inputlecname" class="col-lg-3 control-label">Lecturer Name</label>
                                         <div class="col-lg-9">
                                             <input required='required' class="form-control input-sm textBorder" id="inputlecname" name="inputlecname" placeholder="Lecturer Name" type="text">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="labeladdress" class="col-lg-3 control-label">Address</label>
+                                        <label for="inputaddress" class="col-lg-3 control-label">Address</label>
                                         <div class="col-lg-9">
                                             <textarea required='required' class="form-control input-sm textBorder" style="resize: none" rows="5" id="inputaddress" name="inputaddress" placeholder="Address"></textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="labelgender" class="col-lg-3 control-label">Gender</label>
+                                        <label for="radiogender" class="col-lg-3 control-label">Gender</label>
                                         <div class="col-lg-9">
-                                            <label class="radio-inline"><input type="radio" name="Male">Male</label>
-                                            <label class="radio-inline"><input type="radio" name="Male">Female</label>
+                                            <label class="radio-inline"><input type="radio" name="radiogender" value="male">Male</label>
+                                            <label class="radio-inline"><input type="radio" name="radiogender" value="female">Female</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="labelnic" class="col-lg-3 control-label">NIC Number</label>
+                                        <label for="inputnic" class="col-lg-3 control-label">NIC Number</label>
                                         <div class="col-lg-9">
                                             <input required='required' class="form-control input-sm textBorder" id="inputnic" name="inputnic" placeholder="NIC Number" type="text">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="labelbirthday" class="col-lg-3 control-label">Birth Day</label>
+                                        <label for="datetimepicker" class="col-lg-3 control-label">Birth Day</label>
                                         <div class="col-lg-9">
                                             <input required='required' class="form-control input-sm textBorder" id='datetimepicker' name='datetimepicker' placeholder="Birth Day" type="text">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="labeltelephone" class="col-lg-3 control-label">Telephone</label>
+                                        <label for="inputtelephone" class="col-lg-3 control-label">Telephone</label>
                                         <div class="col-lg-9">
                                             <input required='required' class="form-control input-sm textBorder" id="inputtelephone" name="inputtelephone" placeholder="Telephone" type="text">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="labelemail" class="col-lg-3 control-label">Email</label>
+                                        <label for="inputemail" class="col-lg-3 control-label">Email</label>
                                         <div class="col-lg-9">
                                             <input required='required' class="form-control input-sm textBorder" id="inputemail" name="inputemail" placeholder="Email" type="text">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="labeldept" class="col-lg-3 control-label">Department</label>
+                                        <label for="inputdept" class="col-lg-3 control-label">Department</label>
                                         <div class="col-lg-9">
-                                            <input required='required' class="form-control input-sm textTransparent textBorder" id="inputdept" name="inputdept" placeholder="Department" type="text">
+                                            <input required='required' class="form-control input-sm textBorder" id="inputdept" name="inputdept" placeholder="Department" type="text">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="labelpassword" class="col-lg-3 control-label">Password</label>
+                                        <label for="inputpassword" class="col-lg-3 control-label">Password</label>
                                         <div class="col-lg-9">
                                             <input required='required' class="form-control input-sm textBorder" id="inputpassword" name="inputpassword" placeholder="Password" type="password">
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="labelpasswordconfirm" class="col-lg-3 control-label">Confirm</label>
+                                        <label for="inputpasswordconfirm" class="col-lg-3 control-label">Confirm</label>
                                         <div class="col-lg-9">
                                             <input required='required' class="form-control input-sm textBorder" id="inputpasswordconfirm" name="inputpasswordconfirm" placeholder="Confirm Password" type="password">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-lg-3 col-lg-offset-6">
-                                            <button type="submit" class="btn btn-primary btn-block">Register</button>
+                                            <button type="submit" name="register" class="btn btn-primary btn-block">Register</button>
                                         </div>
                                         <div class="col-lg-3">
                                             <button type="reset" class="btn btn-default btn-block">Clear</button>
