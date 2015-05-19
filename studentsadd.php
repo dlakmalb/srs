@@ -1,6 +1,6 @@
 <?php
 require_once("dbconnection.php");
-require_once("header.php");
+require_once("headeradmin.php");
 ?>
 <?php
 // get user inputs
@@ -21,7 +21,7 @@ if (isset($_POST['register'])):
 
     $result = $conn->query($sql);
     if ($result && $conn->affected_rows > 0) {
-        header("Location: students.php");
+        header("Location: academicyears.php");
         exit;
     } else {
         echo '<script language = "javascript">';
@@ -70,8 +70,8 @@ endif;
                                     <div class="form-group">
                                         <label for="radiogender" class="col-lg-3 control-label">Gender</label>
                                         <div class="col-lg-9">
-                                            <label class="radio-inline"><input type="radio" name="radiogender" value="male">Male</label>
-                                            <label class="radio-inline"><input type="radio" name="radiogender" value="female">Female</label>
+                                            <label class="radio-inline"><input required='required' type="radio" name="radiogender" value="male">Male</label>
+                                            <label class="radio-inline"><input required='required' type="radio" name="radiogender" value="female">Female</label>
                                         </div>
                                     </div>
                                     <div class="form-group">

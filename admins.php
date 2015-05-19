@@ -1,7 +1,8 @@
 <?php
 require_once("dbconnection.php");
-require_once("header.php");
+require_once("headeradmin.php");
 ?> 
+
 <!DOCTYPE html>
 <html>
     <?php add_head() ?>
@@ -37,9 +38,15 @@ require_once("header.php");
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectadminid" name="selectadminid">
                                                         <option> </option>
-                                                        <option>ADMIN001</option>
-                                                        <option>ADMIN002</option>
-                                                        <option>ADMIN003</option>
+                                                        <?php
+                                                        // load admin id to select box
+                                                        $sql = "SELECT admin_id FROM `admins`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['admin_id'] . "'>" . $row['admin_id'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -50,9 +57,15 @@ require_once("header.php");
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectadminname" name="selectadminname">
                                                         <option> </option>
-                                                        <option>A.B.C Admin</option>
-                                                        <option>D.E.F. Admin</option>
-                                                        <option>G.H.I. Admin</option>
+                                                        <?php
+                                                        // load admin name to select box
+                                                        $sql = "SELECT name FROM `admins`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -82,24 +95,32 @@ require_once("header.php");
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>ADMIN001</td>
-                                <td>A.B.C Admin</td>
-                                <td>admin001@gmail.com</td>
-                                <td>0718381712</td>
-                                <td> <a href="updatecomplaint.php?complain_id=<?php echo $row['complain_id']?>">edit</a></td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>delete</a></td>
-                            </tr>
-                            <tr>
-                                <td>ADMIN002</td>
-                                <td>D.E.F. Admin</td>
-                                <td>admin002@gmail.com</td>
-                                <td>0777123456</td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>edit</a></td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>delete</a></td>
-                            </tr>
-                        </tbody>
+                        <?php
+                        mysql_select_db('student_registration_db');
+
+                        $sql = "SELECT 
+                                    admin_id,
+                                    name,
+                                    email,
+                                    telephone
+                                FROM admins";
+
+                        $result = $conn->query($sql);
+                        ?>
+                        <?php
+                        while ($row = mysqli_fetch_array($result, MYSQLI_BOTH)) {
+                            echo "<tr>";
+
+                            echo "<td>" . $row['admin_id'] . "</td>";
+                            echo "<td>" . $row['name'] . "</td>";
+                            echo "<td>" . $row['email'] . "</td>";
+                            echo "<td>" . $row['telephone'] . "</td>";
+                            echo "<td> <a href='adminsedit.php?admin_id=" . $row['admin_id'] . "'>edit</a></td>";
+                            echo "<td> <a href=''>delete</a></td>";
+
+                            echo "</tr>";
+                        }
+                        ?>
 
 
 

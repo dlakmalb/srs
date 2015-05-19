@@ -1,20 +1,8 @@
 <?php
 require_once("dbconnection.php");
-require_once("header.php");
+require_once("headeradmin.php");
 ?>
-<?php
-mysql_select_db('student_registration_db');
 
-$sql = "SELECT 
-            course_code,
-            course_name,
-            department,
-            `level`,
-            credits
-        FROM courses";
-
-$result = $conn->query($sql);
-?>
 <!DOCTYPE html>
 <html>
     <?php add_head() ?>
@@ -50,9 +38,15 @@ $result = $conn->query($sql);
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm" id="selectcode" name="selectcode">
                                                         <option> </option>
-                                                        <option>ECX5245</option>
-                                                        <option>ECX5267</option>
-                                                        <option>ECX5234</option>
+                                                        <?php
+                                                        // load course codes and names to select box
+                                                        $sql = "SELECT course_code, course_name FROM `courses`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['course_code'] . "'>" . $row['course_code'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -63,9 +57,15 @@ $result = $conn->query($sql);
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm" id="selectname" name="selectname">
                                                         <option> </option>
-                                                        <option>Database Management System</option>
-                                                        <option>Software Testing and Quality Assurance</option>
-                                                        <option>Data Communication</option>
+                                                        <?php
+                                                        // load course codes and names to select box
+                                                        $sql = "SELECT course_name FROM `courses`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['course_name'] . "'>" . $row['course_name'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -76,9 +76,15 @@ $result = $conn->query($sql);
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm" id="selectdept" name="selectdept">
                                                         <option> </option>
-                                                        <option>Electrical and Computer Engineering</option>
-                                                        <option>Civil Engineering</option>
-                                                        <option>Electrical Engineering</option>
+                                                        <?php
+                                                        // load course codes and names to select box
+                                                        $sql = "SELECT DISTINCT department FROM `courses`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['department'] . "'>" . $row['department'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -103,12 +109,15 @@ $result = $conn->query($sql);
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm" id="selectlevel" name="selectlevel">
                                                         <option> </option>
-                                                        <option>1</option>
-                                                        <option>2</option>
-                                                        <option>3</option>
-                                                        <option>4</option>
-                                                        <option>5</option>
-                                                        <option>6</option>
+                                                        <?php
+                                                        // load course codes and names to select box
+                                                        $sql = "SELECT DISTINCT level FROM `courses`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['level'] . "'>" . $row['level'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -140,7 +149,19 @@ $result = $conn->query($sql);
                                 <th>Delete</th>
                             </tr>
                         </thead>
+                        <?php
+                        mysql_select_db('student_registration_db');
 
+                        $sql = "SELECT 
+                                course_code,
+                                course_name,
+                                department,
+                                `level`,
+                                credits
+                            FROM courses";
+
+                        $result = $conn->query($sql);
+                        ?>
                         <?php
                         while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
                             echo "<tr>";
@@ -151,8 +172,8 @@ $result = $conn->query($sql);
                             echo "<td>" . $row['level'] . "</td>";
                             echo "<td>" . $row['credits'] . "</td>";
                             echo "<td>" . $row['credits'] . "</td>";
-                            echo "<td> <a href=''>edit</a></td>";
-                            echo "<td> <a href=''>delete</a></td>";
+                            echo "<td> <a href='coursesedit.php?course_code=".$row['course_code']."'>edit</a></td>";
+                            echo "<td> <a href='#' onClick='#'>delete</a></td>";
 
                             echo "</tr>";
                         }

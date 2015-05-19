@@ -11,7 +11,7 @@ function add_nav() {
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href=" ">Student Registration System</a>
+            <lable class="navbar-brand"  >Student Registration System</lable>
         </div>
         <!-- Top Menu Items -->
         <ul class="nav navbar-right top-nav">
@@ -56,7 +56,7 @@ function add_nav() {
                     <a href="bootstrap-grid.html"><i class="fa fa-fw fa-money"></i> Payments</a>
                 </li>
                 <li>
-                    <a href="bootstrap-grid.html"><i class="fa fa-fw fa-calendar"></i> Academic Years</a>
+                    <a href="academicyears.php"><i class="fa fa-fw fa-calendar"></i> Academic Years</a>
                 </li>
                 <li>
                     <a href="bootstrap-grid.html"><i class="fa fa-fw fa-info-circle"></i> About</a>

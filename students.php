@@ -1,19 +1,7 @@
 <?php
 require_once("dbconnection.php");
-require_once("header.php");
+require_once("headeradmin.php");
 ?> 
-<?php
-mysql_select_db('student_registration_db');
-
-$sql = "SELECT 
-            student_id,
-            name,
-            field,
-            nic
-        FROM students";
-
-$result = $conn->query($sql);
-?>
 <!DOCTYPE html>
 <html>
     <?php add_head() ?>
@@ -44,53 +32,75 @@ $result = $conn->query($sql);
                                         <fieldset>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="labelid" class="col-md-2 control-label">Student ID</label>
+                                                    <label for="selectid" class="col-md-2 control-label">Student ID</label>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectid" name="selectid">
                                                         <option> </option>
-                                                        <option>211068611</option>
-                                                        <option>711068901</option>
-                                                        <option>211068750</option>
+                                                        <?php
+                                                        // load student id to select box
+                                                        $sql = "SELECT student_id FROM `students`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['student_id'] . "'>" . $row['student_id'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="labelname" class="col-md-2 control-label">Student Name</label>
+                                                    <label for="selectname" class="col-md-2 control-label">Student Name</label>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectname" name="selectname">
                                                         <option> </option>
-                                                        <option>B.A.D.L.Bulathsinghala</option>
-                                                        <option>H.A.M.C.W.Hewawitharana</option>
-                                                        <option>P.M.B.Weebedda</option>
+                                                        <?php
+                                                        // load student names to select box
+                                                        $sql = "SELECT name FROM `students`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['name'] . "'>" . $row['name'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="labeldept" class="col-md-2 control-label">Department</label>
+                                                    <label for="selectfield" class="col-md-2 control-label">Field</label>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <select class="form-control input-sm" id="selectdept" name="selectdept">
+                                                    <select class="form-control input-sm" id="selectfield" name="selectfield">
                                                         <option> </option>
-                                                        <option>Electrical and Computer Engineering</option>
-                                                        <option>Civil Engineering</option>
-                                                        <option>Electrical Engineering</option>
+                                                        <?php
+                                                        $sql = "SELECT DISTINCT field FROM `students`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['field'] . "'>" . $row['field'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="labelnic" class="col-md-2 control-label">NIC Number</label>
+                                                    <label for="selectnic" class="col-md-2 control-label">NIC Number</label>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectnic" name="selectnic">
                                                         <option> </option>
-                                                        <option>910034103v</option>
-                                                        <option>900044103v</option>
-                                                        <option>900064103v</option>
+                                                        <?php
+                                                        $sql = "SELECT nic FROM `students`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['nic'] . "'>" . $row['nic'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -100,7 +110,6 @@ $result = $conn->query($sql);
                                                 </div>   
                                                 <div class="col-md-2">
                                                     <a href="students.php" type="reset" class="btn btn-default btn-block">Clear</a>
-
                                                 </div>
                                             </div>
                                         </fieldset>
@@ -114,13 +123,24 @@ $result = $conn->query($sql);
                             <tr>
                                 <th>Student ID</th>
                                 <th>Student Name</th>
-                                <th>Department</th>
+                                <th>Field</th>
                                 <th>NIC Number</th>
                                 <th>Edit</th>
                                 <th>Delete</th>
                             </tr>
                         </thead>
+                        <?php
+                        mysql_select_db('student_registration_db');
 
+                        $sql = "SELECT 
+                                student_id,
+                                name,
+                                field,
+                                nic
+                            FROM students";
+
+                        $result = $conn->query($sql);
+                        ?>
                         <?php
                         while ($row = mysqli_fetch_array($result, MYSQLI_BOTH)) {
                             echo "<tr>";
@@ -129,7 +149,7 @@ $result = $conn->query($sql);
                             echo "<td>" . $row['name'] . "</td>";
                             echo "<td>" . $row['field'] . "</td>";
                             echo "<td>" . $row['nic'] . "</td>";
-                            echo "<td> <a href=''>edit</a></td>";
+                            echo "<td> <a href='studentsedit.php?student_id=".$row['student_id']."'>edit</a></td>";
                             echo "<td> <a href=''>delete</a></td>";
 
                             echo "</tr>";
@@ -142,7 +162,7 @@ $result = $conn->query($sql);
         </div>
         <script>$("#selectid").select2({placeholder: "Select Student ID", allowClear: true});</script>
         <script>$("#selectname").select2({placeholder: "Select Student Name", allowClear: true});</script>
-        <script>$("#selectdept").select2({placeholder: "Select Department", allowClear: true});</script>
+        <script>$("#selectfield").select2({placeholder: "Select Field", allowClear: true});</script>
         <script>$("#selectnic").select2({placeholder: "Select NIC", allowClear: true});</script>
         <script>$("#selectlevel").select2({placeholder: "Select Level", allowClear: true});</script>
     </body>
