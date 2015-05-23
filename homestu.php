@@ -1,6 +1,6 @@
 <?php
 require_once("dbconnection.php");
-require_once("headeradmin.php");
+require_once("headerstu.php");
 ?> 
 <!DOCTYPE html>
 <html>
@@ -14,7 +14,7 @@ require_once("headeradmin.php");
                     <div class="row">
                         <div class="col-lg-12">
                             <h1 class="page-header">
-                                Welcome to Administration Panel
+                                Welcome to Student Panel
                             </h1>
                         </div>
                     </div>

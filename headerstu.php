@@ -11,7 +11,7 @@ function add_nav() {
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href=" ">Student Registration System</a>
+            <lable class="navbar-brand"  >Student Registration System</lable>
         </div>
         <!-- Top Menu Items -->
         <ul class="nav navbar-right top-nav">
@@ -38,26 +38,26 @@ function add_nav() {
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
                 <li class="active">
-                    <a href="home.php"><i class="fa fa-fw fa-dashboard"></i> Admin Panel</a>
+                    <a href="homestu.php"><i class="fa fa-fw fa-dashboard"></i> Student Panel</a>
                 </li>
                 <li>
-                    <a href="courses.php"><i class="fa fa-fw fa-book"></i> Courses</a>
+                    <a href="profilestu.php"><i class="fa fa-fw fa-user"></i> My Profile</a>
                 </li>
                 <li>
-                    <a href="students.php"><i class="fa fa-fw fa-users"></i> Students</a>
+                    <a href="programstu.php"><i class="fa fa-fw fa-book"></i> My Programs</a>
                 </li>
                 <li>
-                    <a href="lecturers.php"><i class="fa fa-fw fa-user-plus"></i> Lecturers</a>
+                    <a href="coursesregstu.php"><i class="fa fa-fw fa-user-plus"></i> Courses Registration</a>
                 </li>
                 <li>
-                    <a href="admins.php"><i class="fa fa-fw fa-user-secret"></i> Administrators</a>
+                    <a href="#"><i class="fa fa-fw fa-user-secret"></i> Requisite Courses</a>
                 </li>
-                <li>
-                    <a href="bootstrap-grid.html"><i class="fa fa-fw fa-money"></i> Payments</a>
-                </li>
-                <li>
-                    <a href="bootstrap-grid.html"><i class="fa fa-fw fa-calendar"></i> Academic Years</a>
-                </li>
+                <!--       <li>
+                           <a href="bootstrap-grid.html"><i class="fa fa-fw fa-money"></i> Payments</a>
+                       </li>
+                       <li>
+                           <a href="#"><i class="fa fa-fw fa-calendar"></i> Academic Years</a>
+                       </li>-->
                 <li>
                     <a href="bootstrap-grid.html"><i class="fa fa-fw fa-info-circle"></i> About</a>
                 </li>

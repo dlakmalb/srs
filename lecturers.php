@@ -1,7 +1,36 @@
 <?php
 require_once("dbconnection.php");
-require_once("header.php");
+require_once("headeradmin.php");
 ?> 
+<?php
+$condition = [];
+$id = $name = $dept = $nic = "";
+
+if (isset($_GET["selectlecid"]) && strlen($_GET["selectlecid"]) > 0) {
+    $hasId = true;
+    $id = $_GET["selectlecid"];
+    $condition[] = " lecturers.lecturer_id = '$id'";
+}
+if (isset($_GET["selectlecname"]) && strlen($_GET["selectlecname"]) > 0) {
+    $hasName = true;
+    $name = $_GET["selectlecname"];
+    $condition[] = " lecturers.name = '$name'";
+}
+if (isset($_GET["selectdept"]) && strlen($_GET["selectdept"]) > 0) {
+    $hasDept = true;
+    $dept = $_GET["selectdept"];
+    $condition[] = " lecturers.department = '$dept'";
+}
+if (isset($_GET["selectnic"]) && strlen($_GET["selectnic"]) > 0) {
+    $hasNic = true;
+    $nic = $_GET["selectnic"];
+    $condition[] = " lecturers.nic = '$nic'";
+}
+$where_clause = "";
+if (count($condition) > 0) {
+    $where_clause = "Where " . implode(" AND ", $condition);
+}
+?>
 <!DOCTYPE html>
 <html>
     <?php add_head() ?>
@@ -35,53 +64,77 @@ require_once("header.php");
                                         <fieldset>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="labellecid" class="col-md-2 control-label">Lecturer ID</label>
+                                                    <label for="selectlecid" class="col-md-2 control-label">Lecturer ID</label>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectlecid" name="selectlecid">
                                                         <option> </option>
-                                                        <option>LEC001</option>
-                                                        <option>LEC002</option>
-                                                        <option>LEC003</option>
+                                                        <?php
+                                                        $sql = "SELECT lecturer_id FROM `lecturers`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            $sel = $row['lecturer_id'] == $id ? "selected" : "";
+                                                            echo "<option $sel value='" . $row['lecturer_id'] . "'>" . $row['lecturer_id'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="labellecname" class="col-md-2 control-label">Lecturer Name</label>
+                                                    <label for="selectlecname" class="col-md-2 control-label">Lecturer Name</label>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectlecname" name="selectlecname">
                                                         <option> </option>
-                                                        <option>B.A.D.L.Bulathsinghala</option>
-                                                        <option>H.A.M.C.W.Hewawitharana</option>
-                                                        <option>P.M.B.Weebedda</option>
+                                                        <?php
+                                                        $sql = "SELECT salutation, name FROM `lecturers`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            $sel = $row['name'] == $name ? "selected" : "";
+                                                            echo "<option $sel value='" . $row['name'] . "'>" . $row['salutation'] . " " . $row['name'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="labeldept" class="col-md-2 control-label">Department</label>
+                                                    <label for="selectdept" class="col-md-2 control-label">Department</label>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm" id="selectdept" name="selectdept">
                                                         <option> </option>
-                                                        <option>Electrical and Computer Engineering</option>
-                                                        <option>Civil Engineering</option>
-                                                        <option>Electrical Engineering</option>
+                                                        <?php
+                                                        $sql = "SELECT DISTINCT department FROM `lecturers`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            $sel = $row['department'] == $dept ? "selected" : "";
+                                                            echo "<option $sel value='" . $row['department'] . "'>" . $row['department'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="labelnic" class="col-md-2 control-label">NIC Number</label>
+                                                    <label for="selectnic" class="col-md-2 control-label">NIC Number</label>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectnic" name="selectnic">
                                                         <option> </option>
-                                                        <option>910034103v</option>
-                                                        <option>900044103v</option>
-                                                        <option>900064103v</option>
+                                                        <?php
+                                                        $sql = "SELECT nic FROM `lecturers`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            $sel = $row['nic'] == $nic ? "selected" : "";
+                                                            echo "<option $sel value='" . $row['nic'] . "'>" . $row['nic'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -111,26 +164,34 @@ require_once("header.php");
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>LEC001</td>
-                                <td>B.A.D.L.Bulathsinghala</td>
-                                <td>Electrical and Computer Engineering</td>
-                                <td>910034103v</td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>edit</a></td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>delete</a></td>
-                            </tr>
-                            <tr>
-                                <td>LEC002</td>
-                                <td>H.A.M.C.W.Hewawitharana</td>
-                                <td>Electrical and Computer Engineering</td>
-                                <td>900044103v</td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>edit</a></td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>delete</a></td>
-                            </tr>
-                        </tbody>
+                        <?php
+                        mysql_select_db('student_registration_db');
 
+                        $sql = "SELECT 
+                                    lecturer_id,
+                                    salutation,
+                                    name,
+                                    department,
+                                    nic
+                                FROM lecturers
+                                $where_clause";
 
+                        $result = $conn->query($sql);
+                        ?>
+                        <?php
+                        while ($row = mysqli_fetch_array($result, MYSQLI_BOTH)) {
+                            echo "<tr>";
+
+                            echo "<td>" . $row['lecturer_id'] . "</td>";
+                            echo "<td>" . $row['salutation'] . " " . $row['name'] . "</td>";
+                            echo "<td>" . $row['department'] . "</td>";
+                            echo "<td>" . $row['nic'] . "</td>";
+                            echo "<td> <a href='lecturersedit.php?lecturer_id=".$row['lecturer_id']."'>edit</a></td>";
+                            echo "<td> <a href=''>delete</a></td>";
+
+                            echo "</tr>";
+                        }
+                        ?>
 
                     </table>
                 </div> 

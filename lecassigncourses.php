@@ -1,7 +1,28 @@
 <?php
 require_once("dbconnection.php");
-require_once("header.php");
+require_once("headeradmin.php");
 ?> 
+<?php
+// get user inputs
+if (isset($_POST['register'])):
+    $course_code = ($_POST['selectcoursecode']);
+    $year = ($_POST['selectyear']);
+    $lec_id = ($_POST['selectlecid']);
+
+    $sql = "INSERT INTO lecturercourses (lecturer_id, course_code, academic_year)
+            VALUES('" . $lec_id . "', '" . $course_code . "', '" . $year . "')";
+
+    $result = $conn->query($sql);
+    if ($result && $conn->affected_rows > 0) {
+        header("Location: lecassigncourses.php");
+        exit;
+    } else {
+        echo '<script language = "javascript">';
+        echo 'alert("Please Enter Valide Information")';
+        echo '</script>';
+    }
+endif;
+?>
 <!DOCTYPE html>
 <html>
     <?php add_head() ?>
@@ -23,18 +44,24 @@ require_once("header.php");
                             <div class="panel panel-info">
                                 <div class="panel-heading"> Assign Courses to Lecturers </div>
                                 <div class="panel-body">
-                                    <form class="form-horizontal" action="" method="GET">
+                                    <form class="form-horizontal" action="" method="POST">
                                         <fieldset>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="labelcoursecode" class="col-md-2 control-label">Course Code</label>
+                                                    <label for="selectcoursecode" class="col-md-2 control-label">Course</label>
                                                 </div>
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectcoursecode" name="selectcoursecode">
                                                         <option> </option>
-                                                        <option>ECX5245 - Database Management System</option>
-                                                        <option>ECX5267 - Software Testing and Quality Assurance</option>
-                                                        <option>ECX5234 - Data Communication</option>
+                                                        <?php
+                                                        // load course codes and names to select box
+                                                        $sql = "SELECT course_code, course_name FROM `courses`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['course_code'] . "'>" . $row['course_code'] . "-" . $row['course_name'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -45,9 +72,14 @@ require_once("header.php");
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectyear" name="selectyear">
                                                         <option> </option>
-                                                        <option>2011-2012</option>
-                                                        <option>2012-2013</option>
-                                                        <option>2013-2014</option>
+                                                        <?php
+                                                        $sql = "SELECT academic_year FROM `academicyear`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['academic_year'] . "'>" . $row['academic_year'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
@@ -58,17 +90,23 @@ require_once("header.php");
                                                 <div class="col-md-4">
                                                     <select class="form-control input-sm textBorder" id="selectlecid" name="selectlecid">
                                                         <option> </option>
-                                                        <option>ABD</option>
-                                                        <option>DEF</option>
+                                                        <?php
+                                                        $sql = "SELECT lecturer_id, name FROM `lecturers`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            echo "<option value='" . $row['lecturer_id'] . "'>" . $row['lecturer_id'] . " - " . $row['name'] . "</option>";
+                                                        }
+                                                        "</select>"
+                                                        ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div class="col-md-2 col-md-offset-2">
-                                                    <button type="submit" class="btn btn-primary btn-block">Assign</button>
+                                                    <button type="submit" name="register" class="btn btn-primary btn-block">Assign</button>
                                                 </div>   
                                                 <div class="col-md-2">
-                                                    <a href="lecassigncourses.php.php" type="reset" class="btn btn-default btn-block">Clear</a>
+                                                    <a href="lecassigncourses.php" type="reset" class="btn btn-default btn-block">Clear</a>
 
                                                 </div>
                                             </div>
@@ -89,32 +127,44 @@ require_once("header.php");
                                 <th>Delete</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr>
-                                <td>ECX5245</td>
-                                <td>Database Management System</td>
-                                <td>2013-2014</td>
-                                <td>ABC</td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>edit</a></td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>delete</a></td>
-                            </tr>
-                            <tr>
-                                <td>ECX5267</td>
-                                <td>Software Testing and Quality Assurance</td>
-                                <td>2012-2013</td>
-                                <td>DEF</td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>edit</a></td>
-                                <td> <a href='updatecomplaint.php?complain_id=" . $row['complain_id'] . "'>delete</a></td>
-                            </tr>
-                        </tbody>
+                        <?php
+                        // add to table
+                        mysql_select_db('student_registration_db');
 
+                        $sql = "SELECT 
+                                    lecturercourses.course_code,
+                                    lecturercourses.academic_year,
+                                    lecturercourses.lecturer_id,
+                                    courses.course_name,
+                                    lecturers.name,
+                                    lecturers.salutation
 
+                                FROM lecturercourses
+                                LEFT JOIN courses ON lecturercourses.course_code = courses.course_code
+                                LEFT JOIN lecturers ON lecturercourses.lecturer_id = lecturers.lecturer_id";
+
+                        $result = $conn->query($sql);
+                        ?>
+                        <?php
+                        while ($row = mysqli_fetch_array($result, MYSQLI_BOTH)) {
+                            echo "<tr>";
+
+                            echo "<td>" . $row['course_code'] . "</td>";
+                            echo "<td>" . $row['course_name'] . "</td>";
+                            echo "<td>" . $row['academic_year'] . "</td>";
+                            echo "<td>" . $row['salutation'] . " " . $row['name'] . "</td>";                            
+                            echo "<td> <a href=''>edit</a></td>";
+                            echo "<td> <a href=''>delete</a></td>";
+
+                            echo "</tr>";
+                        }
+                        ?>
 
                     </table>
                 </div> 
             </div>
         </div>
-        <script>$("#selectcoursecode").select2({placeholder: "Select Course Code", allowClear: true});</script>
+        <script>$("#selectcoursecode").select2({placeholder: "Select Course", allowClear: true});</script>
         <script>$("#selectyear").select2({placeholder: "Select Academic Year", allowClear: true});</script>
         <script>$("#selectlecid").select2({placeholder: "Select Lecturer", allowClear: true});</script>
     </body>
