@@ -7,35 +7,6 @@ require_once("utility.php");
 ?>
 <?php
 $student_id = $_SESSION['STUDENT_ID'];
-// Handle registeration and de registeration on post
-if($_SERVER['REQUEST_METHOD'] == 'POST')
-{
-    
-    $course = $_POST['course'];
-    $year = $_POST['year'];
-
-    $date = date('Y-m-d');
-
-    if(isset($_POST['register']))
-    {
-        $fee= $_POST['fee'];
-        $sql = "insert into registrations(student_id,academic_year,course_code,date,course_fee)
-            values('$student_id','$year','$course','$date',$fee)";
-        $result = mysqli_query($conn, $sql);
-        
-    }
-    elseif (isset($_POST['deregister']) )
-    {
-        $sql ="DELETE from registrations where student_id='$student_id' AND course_code ='$course' AND academic_year = '$year' ";
-        $result = mysqli_query($conn, $sql);
-    }
-}
-    
-
-// end handling register/deregister
-?>
-
-<?php
 
 // ----------- find current registration year
 $sql = "select academic_year
@@ -53,7 +24,166 @@ if($row)
     $registration_year= $row['academic_year'];
 }
 
-/// -------------- retrieving currently registered courses
+
+/// -------------- retrieving currently registered courses for this year
+$sql = "SELECT 
+        courses.course_code,
+        course_name,
+        department,
+        `level`,
+        credits,
+        course_fee,
+        SUBSTR(courses.course_code,3,1) as category
+    FROM courses join registrations on registrations.course_code = courses.course_code
+    where student_id ='{$_SESSION['STUDENT_ID']}' AND academic_year = '$registration_year' ";
+
+$result = $conn->query($sql);
+
+$registeredCourses = array();
+$registered_course_ids = array();
+$categoryCredits=array("X" => 0, "Y" => 0, "Z" => 0, "J" => 0,
+                        "M" => 0, "I" => 0, "E" => 0, "L" => 0, "K" => 0);
+while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+    $registeredCourses[] = $row;
+    $registered_course_ids[] = $row['course_code'];
+    $categoryCredits[$row['category']] += $row['credits'];
+}
+$totalRegisteredCredits = array_sum($categoryCredits);
+
+
+// Handle registeration and de registeration on post
+if($_SERVER['REQUEST_METHOD'] == 'POST')
+{
+    $course = $_POST['course'];
+    $year = $_POST['year'];
+
+    $date = date('Y-m-d');
+    
+    //get currently registered subjects
+    $all_registered_courses = array();
+    $sql = "select course_code from registrations 
+                where student_id='$student_id'";
+    $result = mysqli_query($conn, $sql);
+    while($row = mysqli_fetch_array($result, MYSQL_ASSOC))
+    {
+        $all_registered_courses[] = $row["course_code"];
+    }
+
+    if(isset($_POST['register']))
+    {
+        //find prerequisites
+        $sql = "select prerequisite_course_code from courseprerequisites
+                where course_code='$course'";
+        
+        $result = mysqli_query($conn, $sql);
+        $prerequisites = array();
+        while($row = mysqli_fetch_array($result, MYSQL_ASSOC))
+        {
+            $prerequisites[] = $row["prerequisite_course_code"];
+        }
+        
+        //find co-requisites
+        $sql = "select corequisite_course_code from coursecorequisites
+                where course_code='$course'";
+        
+        $result = mysqli_query($conn, $sql);
+        $corequisites = array();
+        while($row = mysqli_fetch_array($result, MYSQL_ASSOC))
+        {
+            $corequisites[] = $row["corequisite_course_code"];
+        }
+        
+        //find credit cout of the course
+        $sql = "select credits from courses where course_code='$course'";
+        $result = mysqli_query($conn, $sql);
+        $row = mysqli_fetch_array($result, MYSQL_ASSOC);
+        $course_credit_count = $row["credits"];
+        
+        
+        //---------- check if course registration is acceptable
+        $has_error = false;
+        //check if prerequisites are met
+        if(! $has_error)
+        {
+            $previous_regs = array_diff($all_registered_courses, $registered_course_ids);
+            $unmet_prereqs = array_diff($prerequisites, $previous_regs);
+            if(count($unmet_prereqs) > 0)
+            {
+                $error_message = "Course pre-requisites are not met";
+                $has_error = true;
+            }
+        }
+        
+        if((!$has_error) && (!$can_register) )
+        {
+            $error_message = "Registrations are not allowed right now";
+            $has_error = true;
+        }
+        
+        if(! $has_error)
+        {
+            //check if co-requisites are met
+            $unmet_coreqs= array_diff($corequisites, $all_registered_courses);
+            if(count($unmet_coreqs) > 0)
+            {
+                $error_message = "Course co-requisites are not met";
+                $has_error = true;
+            }
+        }
+        
+        if(! $has_error)
+        {
+            if($course_credit_count + $totalRegisteredCredits > MAX_CREDITS_PER_YEAR)
+            {
+                $error_message = "Too many credits per year";
+                $has_error = true;
+            }
+        }
+        
+        if(!$has_error)
+        {
+            $fee= $_POST['fee'];
+            $sql = "insert into registrations(student_id,academic_year,course_code,date,course_fee)
+                values('$student_id','$year','$course','$date',$fee)";
+            $result = mysqli_query($conn, $sql);
+        }
+        
+    }
+    elseif (isset($_POST['deregister']) )
+    {
+        //find prerequisites
+        $sql = "select course_code from coursecorequisites
+                where corequisite_course_code='$course'";
+
+        $result = mysqli_query($conn, $sql);
+        $courses_requiring_course = array();
+        while($row = mysqli_fetch_array($result, MYSQL_ASSOC))
+        {
+            $courses_requiring_course[] = $row["course_code"];
+        }
+        
+        $unmet_coreqs = array_intersect($courses_requiring_course, $registered_course_ids);
+        if(count($unmet_coreqs) > 0 )
+        {
+            $error_message = "Cannot deregister the course. Other pending registrations require this course.";
+        }
+        else 
+        {
+            $sql ="DELETE from registrations where student_id='$student_id' AND course_code ='$course' AND academic_year = '$year' ";
+            $result = mysqli_query($conn, $sql);
+        }
+
+    }
+}
+    
+
+// end handling register/deregister
+?>
+
+<?php
+
+
+/// ----------  retrieving currently registered courses for this year - AGAIN - after update
 $sql = "SELECT 
         courses.course_code,
         course_name,
@@ -75,7 +205,6 @@ while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
     $categoryCredits[$row['category']] += $row['credits'];
 }
 $totalRegisteredCredits = array_sum($categoryCredits);
-
 
 //----- building the search where clause from filter selection
 $condition = [];
@@ -297,6 +426,14 @@ if (count($condition) > 0) {
                             </div>
                         </div>
                     </div>
+                    <?php if(isset($error_message)): ?>
+                    <div class="well">
+                        <span class="text-danger" > Error : 
+                            <?php echo($error_message); ?>
+                        </span>
+                    </div>
+                    <?php endif;?>
+                    
                     <h2>Available Courses</h2>
                     <table id="table" class="table table-hover table-bordered">
                         <thead>	

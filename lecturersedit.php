@@ -40,7 +40,7 @@ if (isset($_POST['update'])):
     $salutation = ($_POST['selectsalutation']);
     $name = ($_POST['inputlecname']);
     $address = ($_POST['inputaddress']);
-    $Gender = ($_POST['radiogender']);
+    $gender = ($_POST['radiogender']);
     $nic = ($_POST['inputnic']);
     $birthday = ($_POST['datetimepicker']);
     $telephone = ($_POST['inputtelephone']);
@@ -129,8 +129,21 @@ endif;
                                     <div class="form-group">
                                         <label for="radiogender" class="col-lg-3 control-label">Gender</label>
                                         <div class="col-lg-9">
-                                            <label class="radio-inline"><input checked="" required='required' type="radio" name="radiogender" value="male">Male</label>
-                                            <label class="radio-inline"><input required='required' type="radio" name="radiogender" value="female">Female</label>
+                                            <?php 
+                                            if($gender =='male')
+                                            {?>
+                                            <label class="radio-inline"><input required='required' type="radio" name="radiogender" checked="checked" value="male">Male</label>
+                                                <label class="radio-inline"><input required='required' type="radio" name="radiogender" value="female">Female</label>
+                                                <?php
+                                            }
+                                            else
+                                            {
+                                                ?>
+                                                <label class="radio-inline"><input required='required' type="radio" name="radiogender" value="male">Male</label>
+                                                <label class="radio-inline"><input required='required' type="radio" name="radiogender" checked="checked" value="female">Female</label>
+                                                <?php
+                                            } 
+                                            ?>  
                                         </div>
                                     </div>
                                     <div class="form-group">

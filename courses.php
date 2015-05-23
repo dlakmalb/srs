@@ -1,6 +1,9 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("utility.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?>
 <?php
 $condition = [];
@@ -54,11 +57,8 @@ if (count($condition) > 0) {
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-offset-2 col-md-2">
+                        <div class="col-md-offset-3 col-md-2">
                             <a class="btn btn-info btn-block" href='coursesadd.php'>Add Course</a> <br/>
-                        </div>                    
-                        <div class="col-md-2">
-                            <a class="btn btn-info btn-block" href='courserequisites.php'>Course Requisites</a> <br/>
                         </div>
                     </div>
                     <div class="row">
@@ -168,7 +168,6 @@ if (count($condition) > 0) {
                                 <th>Credits</th>
                                 <th>Course Fee</th>
                                 <th>Edit</th>
-                                <th>Delete</th>
                             </tr>
                         </thead>
                         <?php
@@ -193,9 +192,8 @@ if (count($condition) > 0) {
                             echo "<td>" . $row['department'] . "</td>";
                             echo "<td>" . $row['level'] . "</td>";
                             echo "<td>" . $row['credits'] . "</td>";
-                            echo "<td>" . $row['credits'] . "</td>";
+                            echo "<td>" . number_format(calc_course_fee($row['level'], $row['credits']), 2) . "</td>";
                             echo "<td> <a href='coursesedit.php?course_code=" . $row['course_code'] . "'>edit</a></td>";
-                            echo "<td> <a href='#' onClick='#'>delete</a></td>";
 
                             echo "</tr>";
                         }

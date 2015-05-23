@@ -2,6 +2,8 @@
 require_once("dbconnection.php");
 require_once("headerstu.php");
 require_once("utility.php");
+require_once("loginRequired.php");
+studentLoginRequired();
 ?>
 <?php
 $condition = [];
@@ -47,6 +49,46 @@ if (count($condition) > 0) {
                             </h1>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="panel panel-info">
+                                <div class="panel-heading"> Overall Results </div>
+                                <div class="panel-body">
+                           <?php
+                            $sql = "SELECT      grade, credits
+                                    FROM courses join registrations on courses.course_code=registrations.course_code ";
+
+                            $result = $conn->query($sql);
+                            $totalGradePoints = 0.0;
+                            $total5_6Credits = 0;
+                            $totalCredits = 0;
+                            while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                $gp = getGradePoint($row["grade"]);
+                                if($gp!= 0)
+                                {
+                                    $totalCredits += $row['credits'];
+                                    if($level == 5 || $level ==6 )
+                                    {
+                                        $credits = $row['credits'];
+                                        $totalGradePoints += ($gp * $credits);
+                                        $total5_6Credits += $credits;
+                                    }
+                                }
+                            }
+                            $gpa = 0.0;
+                            if($total5_6Credits > 0)
+                            {
+                                $gpa = $totalGradePoints / $total5_6Credits ;
+                            }
+                            echo($total5_6Credits." ".$totalCredits." ".$gpa);
+                            ?>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
                     <div class="row">
                         <div class="col-md-12">
                             <div class="panel panel-info">
@@ -210,6 +252,8 @@ if (count($condition) > 0) {
                             {
                                 $gpa = number_format($totalGradePoints / $totalResultCredits,2) ;
                             }
+
+                            
                             ?>
                         </tbody>
                     </table>

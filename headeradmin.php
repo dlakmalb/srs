@@ -1,6 +1,6 @@
 <?php
 
-function add_nav() {
+function add_nav($active = "") {
     ?> 
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -11,7 +11,7 @@ function add_nav() {
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <lable class="navbar-brand"  >Student Registration System</lable>
+            <lable class="navbar-brand">Student Registration System</lable>
         </div>
         <!-- Top Menu Items -->
         <ul class="nav navbar-right top-nav">
@@ -19,17 +19,7 @@ function add_nav() {
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> User <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-fw fa-gear"></i> Settings</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                        <a href="signOut.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                     </li>
                 </ul>
             </li>
@@ -37,28 +27,28 @@ function add_nav() {
         <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
-                <li class="active">
+                <li <?php if($active == 'home' || $active == ''){ echo('class="active"');} ?> >
                     <a href="home.php"><i class="fa fa-fw fa-dashboard"></i> Admin Panel</a>
                 </li>
-                <li>
+                <li <?php if($active == 'courses'){ echo('class="active"');} ?> >
                     <a href="courses.php"><i class="fa fa-fw fa-book"></i> Courses</a>
                 </li>
-                <li>
+                <li <?php if($active == 'students'){ echo('class="active"');} ?> >
                     <a href="students.php"><i class="fa fa-fw fa-users"></i> Students</a>
                 </li>
-                <li>
+                <li <?php if($active == 'lecturers'){ echo('class="active"');} ?> >
                     <a href="lecturers.php"><i class="fa fa-fw fa-user-plus"></i> Lecturers</a>
                 </li>
-                <li>
+                <li <?php if($active == 'administrators'){ echo('class="active"');} ?> >
                     <a href="admins.php"><i class="fa fa-fw fa-user-secret"></i> Administrators</a>
                 </li>
-                <li>
+                <li <?php if($active == 'payments'){ echo('class="active"');} ?> >
                     <a href="bootstrap-grid.html"><i class="fa fa-fw fa-money"></i> Payments</a>
                 </li>
-                <li>
+                <li <?php if($active == 'academic years'){ echo('class="active"');} ?> >
                     <a href="academicyears.php"><i class="fa fa-fw fa-calendar"></i> Academic Years</a>
                 </li>
-                <li>
+                <li <?php if($active == 'about'){ echo('class="active"');} ?> >
                     <a href="bootstrap-grid.html"><i class="fa fa-fw fa-info-circle"></i> About</a>
                 </li>
             </ul>
@@ -89,6 +79,6 @@ function add_head() {
         <script src="js/bootstrap-table.js"></script>
         <script src="js/select2.min.js"></script>
         <script src="js/bootstrap-datetimepicker.min.js"></script>
-
+        <script src="js/utility.js" type="text/javascript"></script>
     </head>
 <?php } ?>

@@ -175,7 +175,7 @@ while($row = mysqli_fetch_array($result))
                                             <button onclick="duplicate_id()" type="submit" name= "register" class="btn btn-primary btn-block">Update</button>
                                         </div>
                                         <div class="col-lg-3">
-                                            <a href="coursesedit.php?course_code=<?php echo($code);?>" class="btn btn-default btn-block">Cancel</a>
+                                            <a href="coursesedit.php?course_code=<?php echo($course_code);?>" class="btn btn-default btn-block">Cancel</a>
                                         </div>
                                     </div>
                                 </fieldset>

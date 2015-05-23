@@ -161,7 +161,6 @@ if (count($condition) > 0) {
                                 <th>Department</th>
                                 <th>NIC Number</th>
                                 <th>Edit</th>
-                                <th>Delete</th>
                             </tr>
                         </thead>
                         <?php
@@ -187,7 +186,6 @@ if (count($condition) > 0) {
                             echo "<td>" . $row['department'] . "</td>";
                             echo "<td>" . $row['nic'] . "</td>";
                             echo "<td> <a href='lecturersedit.php?lecturer_id=".$row['lecturer_id']."'>edit</a></td>";
-                            echo "<td> <a href=''>delete</a></td>";
 
                             echo "</tr>";
                         }

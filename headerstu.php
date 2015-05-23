@@ -19,17 +19,7 @@ function add_nav() {
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> User <b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-fw fa-envelope"></i> Inbox</a>
-                    </li>
-                    <li>
-                        <a href="#"><i class="fa fa-fw fa-gear"></i> Settings</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                        <a href="#"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
+                        <a href="signOut.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
                     </li>
                 </ul>
             </li>
@@ -89,6 +79,6 @@ function add_head() {
         <script src="js/bootstrap-table.js"></script>
         <script src="js/select2.min.js"></script>
         <script src="js/bootstrap-datetimepicker.min.js"></script>
-
+        <script src="js/utility.js" type="text/javascript"></script>
     </head>
 <?php } ?>

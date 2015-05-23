@@ -1,6 +1,8 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?>
 <?php
 // get user inputs
@@ -47,7 +49,7 @@ endif;
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-2">
-                            <form class="form-horizontal" action="" method="POST">
+                            <form class="form-horizontal" action="" method="POST" onsubmit="return checkPassword()" >
                                 <fieldset>
                                     <div class="form-group">
                                         <label for="inputid" class="col-lg-3 control-label">Student ID</label>
@@ -141,6 +143,8 @@ endif;
                 );
 
             });
+            
+
         </script>
     </body>
 </html>

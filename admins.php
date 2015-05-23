@@ -1,6 +1,8 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?> 
 <?php
 $condition = [];
@@ -20,6 +22,21 @@ $where_clause = "";
 if (count($condition) > 0) {
     $where_clause = "Where " . implode(" AND ", $condition);
 }
+if (isset($_POST['delete'])):
+    $admin_id = ($_POST['admin_id']);
+
+    $sql = "DELETE from admins where admin_id='$admin_id'";
+
+    $result = $conn->query($sql);
+    if ($result && $conn->affected_rows > 0) {
+        header("Location: admins.php");
+        exit;
+    } else {
+        echo '<script language = "javascript">';
+        echo 'alert("Failed to delete")';
+        echo '</script>';
+    }
+endif;
 ?>
 <!DOCTYPE html>
 <html>
@@ -136,12 +153,21 @@ if (count($condition) > 0) {
                             echo "<td>" . $row['name'] . "</td>";
                             echo "<td>" . $row['email'] . "</td>";
                             echo "<td>" . $row['telephone'] . "</td>";
-                            echo "<td> <a href='adminsedit.php?admin_id=" . $row['admin_id'] . "'>edit</a></td>";
-                            echo "<td> <a href=''>delete</a></td>";
+                            echo "<td> <a href='adminsedit.php?admin_id=" . $row['admin_id'] . "'>Edit</a></td>";
+                            ?>
+                            <td>
+                                <?php if ($_SESSION['ADMIN_ID'] != $row['admin_id']) { ?>
+                                    <form method="post"  onsubmit="return confirm('Are you sure you want to delete?');" >
+                                        <input type="hidden" value="<?php echo $row['admin_id'] ?>" name="admin_id" />
+                                        <input type="submit" value='Delete' name="delete" class="btn btn-sm btn-link" />
+                                    </form>
 
-                            echo "</tr>";
-                        }
-                        ?>
+                                <?php } else { ?>
+                                    <input type="button" value="Delete" class='btn btn-sm btn-link disabled' disabled />
+                                <?php } ?>
+                            </td>
+                        </tr>
+                        <?php      }         ?>
 
 
 

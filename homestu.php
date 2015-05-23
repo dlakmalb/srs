@@ -1,6 +1,8 @@
 <?php
 require_once("dbconnection.php");
 require_once("headerstu.php");
+require_once("loginRequired.php");
+studentLoginRequired();
 ?> 
 <!DOCTYPE html>
 <html>

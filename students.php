@@ -36,7 +36,7 @@ if (count($condition) > 0) {
     <?php add_head() ?>
     <body> 
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('students') ?>
 
             <div id="page-wrapper">
                 <div class="container-fluid">
@@ -159,7 +159,7 @@ if (count($condition) > 0) {
                                 <th>Field</th>
                                 <th>NIC Number</th>
                                 <th>Edit</th>
-                                <th>Delete</th>
+                                <th>View</th>
                             </tr>
                         </thead>
                         <?php
@@ -183,8 +183,8 @@ if (count($condition) > 0) {
                             echo "<td>" . $row['name'] . "</td>";
                             echo "<td>" . $row['field'] . "</td>";
                             echo "<td>" . $row['nic'] . "</td>";
-                            echo "<td> <a href='studentsedit.php?student_id=".$row['student_id']."'>edit</a></td>";
-                            echo "<td> <a href=''>delete</a></td>";
+                            echo "<td> <a href='studentsedit.php?student_id=".$row['student_id']."'>Edit</a></td>";
+                            echo "<td> <a href=''>More Info</a></td>";
 
                             echo "</tr>";
                         }

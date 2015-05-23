@@ -1,6 +1,8 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?> 
 <?php
 // get user inputs
@@ -19,6 +21,25 @@ if (isset($_POST['register'])):
     } else {
         echo '<script language = "javascript">';
         echo 'alert("Please Enter Valide Information")';
+        echo '</script>';
+    }
+endif;
+
+if (isset($_POST['delete'])):
+    $course_code = ($_POST['course']);
+    $year = ($_POST['year']);
+    $lec_id = ($_POST['lecturer']);
+
+    $sql = "DELETE from lecturercourses where lecturer_id='$lec_id'
+            AND academic_year='$year' AND course_code='$course_code' ";
+
+    $result = $conn->query($sql);
+    if ($result && $conn->affected_rows > 0) {
+        header("Location: lecassigncourses.php");
+        exit;
+    } else {
+        echo '<script language = "javascript">';
+        echo 'alert("Failed to delete")';
         echo '</script>';
     }
 endif;
@@ -123,7 +144,6 @@ endif;
                                 <th>Course Name</th>
                                 <th>Academic Year</th>
                                 <th>Lecture</th>
-                                <th>Edit</th>
                                 <th>Delete</th>
                             </tr>
                         </thead>
@@ -152,9 +172,17 @@ endif;
                             echo "<td>" . $row['course_code'] . "</td>";
                             echo "<td>" . $row['course_name'] . "</td>";
                             echo "<td>" . $row['academic_year'] . "</td>";
-                            echo "<td>" . $row['salutation'] . " " . $row['name'] . "</td>";                            
-                            echo "<td> <a href=''>edit</a></td>";
-                            echo "<td> <a href=''>delete</a></td>";
+                            echo "<td>" . $row['salutation'] . " " . $row['name'] . "</td>";   
+                            ?> 
+                            <td>
+                                <form method="post"  onsubmit="return confirm('Are you sure you want to delete?');" >
+                                    <input type="hidden" value="<?php echo $row['course_code']?>" name="course" />
+                                    <input type="hidden" value="<?php echo $row['academic_year']?>" name="year" />
+                                    <input type="hidden" value="<?php echo $row['lecturer_id']?>" name="lecturer" />
+                                    <input type="submit" value='Delete' name="delete" class="btn btn-sm btn-link" />
+                                </form>
+                            </td>
+                            <?php
 
                             echo "</tr>";
                         }

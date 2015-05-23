@@ -43,8 +43,16 @@ if (isset($_POST['update'])):
     $telephone = ($_POST['inputtelephone']);
     $email = ($_POST['inputemail']);
     $field = ($_POST['inputfield']);
-    $password = ($_POST['inputpassword']);
-    $passwordconfirm = ($_POST['inputpasswordconfirm']);
+    // $passwordconfirm = ($_POST['inputpasswordconfirm']);
+    $password_update="";
+    if(isset($_POST['inputpassword']) && strlen($_POST['inputpassword']) >0 )
+    {
+        $password = ($_POST['inputpassword']);
+        $password_hash= md5($password);
+        $password_update=" , password='$password_hash' ";
+    }
+    
+    
 
     $sql = "UPDATE students
             SET student_id = '$id',
@@ -55,17 +63,15 @@ if (isset($_POST['update'])):
                 birthday = '$birthday',
                 telephone = '$telephone',
                 email = '$email',
-                field = '$field',
-                password = '$password'
+                field = '$field' ".$password_update. "
             WHERE student_id = '$id'";
     
     $result = $conn->query($sql);
-    if ($result && $conn->affected_rows > 0) {
+    if ($result) {
         header("Location: students.php");
         exit;
     } else {
-        header("Location: students.php");
-        exit; 
+        $error_message = $conn->error();
 //        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
     }
 endif;
@@ -85,6 +91,15 @@ endif;
                             </h1>
                         </div>
                     </div>
+                    
+                    <!-- Error Message -->
+                    <?php if(isset($error_message)): ?>
+                    <div class="well">
+                        <?php echo($error_message); ?>
+                    </div>
+                    <?php endif; ?>
+                    
+                    
                     <div class="row">
                         <div class="col-md-6 col-md-offset-2">
                             <form class="form-horizontal" action="" method="POST">
@@ -110,8 +125,22 @@ endif;
                                     <div class="form-group">
                                         <label for="radiogender" class="col-lg-3 control-label">Gender</label>
                                         <div class="col-lg-9">
-                                            <label class="radio-inline"><input required='required' type="radio" name="radiogender" value="male">Male</label>
-                                            <label class="radio-inline"><input required='required' type="radio" name="radiogender" value="female">Female</label>
+                                            <?php 
+                                            if($gender =='male')
+                                            {?>
+                                            <label class="radio-inline"><input required='required' type="radio" name="radiogender" checked="checked" value="male">Male</label>
+                                                <label class="radio-inline"><input required='required' type="radio" name="radiogender" value="female">Female</label>
+                                                <?php
+                                            }
+                                            else
+                                            {
+                                                ?>
+                                                <label class="radio-inline"><input required='required' type="radio" name="radiogender" value="male">Male</label>
+                                                <label class="radio-inline"><input required='required' type="radio" name="radiogender" checked="checked" value="female">Female</label>
+                                                <?php
+                                            } 
+                                            ?>
+
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -141,19 +170,20 @@ endif;
                                     <div class="form-group">
                                         <label for="inputfield" class="col-lg-3 control-label">Field</label>
                                         <div class="col-lg-9">
-                                            <input value = "<?php echo ($field) ?>" required='required' class="form-control input-sm textBorder" id="inputfield" name="inputfield" placeholder="Field of Study" type="text">
+                                            <input value = "<?php echo($field);?>" required='required' class="form-control input-sm textBorder" id="inputfield" name="inputfield" placeholder="Field of Study" type="text">
                                         </div>
                                     </div>
+                                    Leave password fields empty if you do not want to change the password
                                     <div class="form-group">
                                         <label for="inputpassword" class="col-lg-3 control-label">Password</label>
                                         <div class="col-lg-9">
-                                            <input value = "<?php echo ($password) ?>" required='required' class="form-control input-sm textBorder" id="inputpassword" name="inputpassword" placeholder="Password" type="password">
+                                            <input value = "" class="form-control input-sm textBorder" id="inputpassword" name="inputpassword" placeholder="Password" type="password">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="inputpasswordconfirm" class="col-lg-3 control-label">Confirm</label>
                                         <div class="col-lg-9">
-                                            <input value = "<?php echo ($password) ?>" required='required' class="form-control input-sm textBorder" id="inputpasswordconfirm" name="inputpasswordconfirm" placeholder="Confirm Password" type="password">
+                                            <input value = ""  class="form-control input-sm textBorder" id="inputpasswordconfirm" name="inputpasswordconfirm" placeholder="Confirm Password" type="password">
                                         </div>
                                     </div>
                                     <div class="form-group">
