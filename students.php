@@ -1,6 +1,9 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("utility.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?> 
 <?php
 $condition = [];
@@ -184,7 +187,7 @@ if (count($condition) > 0) {
                             echo "<td>" . $row['field'] . "</td>";
                             echo "<td>" . $row['nic'] . "</td>";
                             echo "<td> <a href='studentsedit.php?student_id=".$row['student_id']."'>Edit</a></td>";
-                            echo "<td> <a href=''>More Info</a></td>";
+                            echo "<td> <a href='studentinfo.php?student_id=".$row['student_id']."'>More Info</a></td>";
 
                             echo "</tr>";
                         }

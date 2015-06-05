@@ -30,7 +30,7 @@ endif;
     <?php add_head() ?>
     <body> 
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('courses') ?>
             <div id="page-wrapper">
                 <div class="container-fluid"><br>
                     <div class="row">

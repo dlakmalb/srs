@@ -19,9 +19,7 @@ if (isset($_POST['register'])):
         header("Location: lecassigncourses.php");
         exit;
     } else {
-        echo '<script language = "javascript">';
-        echo 'alert("Please Enter Valide Information")';
-        echo '</script>';
+        $showError = true;
     }
 endif;
 
@@ -48,8 +46,15 @@ endif;
 <html>
     <?php add_head() ?>
     <body> 
+        <?php
+        if(isset($showError) && $showError == true):
+            echo '<script language = "javascript">';
+            echo 'alert("Please Enter Valide Information")';
+            echo '</script>';
+        endif;
+        ?>
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('lecturers') ?>
 
             <div id="page-wrapper">
                 <div class="container-fluid">

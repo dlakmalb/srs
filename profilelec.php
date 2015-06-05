@@ -1,44 +1,46 @@
 <?php
 require_once("dbconnection.php");
-require_once("headerstu.php");
+require_once("headerlec.php");
 require_once("loginRequired.php");
-studentLoginRequired();
+lecturerLoginRequired();
 ?>
 <?php
-$stud_id = $_SESSION["STUDENT_ID"];
+$lec_id = $_SESSION["LECTURER_ID"];
 
 // fill fields
 $sql = "SELECT
+        salutation,
         name,
-        student_id,
+        lecturer_id,
         gender,
         birthday,
         address,
         nic,
         telephone,
-        field,
+        department,
         email
-        FROM students
-        WHERE student_id = $stud_id";
+        FROM lecturers
+        WHERE lecturer_id = '$lec_id'";
 
 $result = $conn->query($sql);
 $row = $result->fetch_array();
 
+$sal = $row['salutation'];
 $name = $row['name'];
-$id = $row['student_id'];
+$id = $row['lecturer_id'];
 $gender = $row['gender'];
 $birthday = $row['birthday'];
 $nic = $row['nic'];
 $address = $row['address'];
 $email = $row['email'];
 $telephone = $row['telephone'];
-$field = $row['field'];
+$dept = $row['department'];
 ?>
 
 <!DOCTYPE html>
 <html>
     <?php add_head() ?>
-    <body background="images/background.jpg"> 
+    <body> 
         <div id="wrapper">
             <?php add_nav('profile') ?>
 
@@ -52,7 +54,7 @@ $field = $row['field'];
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-7">
+                        <div class="col-md-12">
                             <div class="panel panel-info">
                                 <div class="panel-heading"> Personal Information </div>
                                 <div class="panel-body">
@@ -60,12 +62,12 @@ $field = $row['field'];
                                         <label class="control-label h3"><?php echo ($name) ?></label>
                                     </div>
                                     <div>
-                                        <label class="control-label col-md-3">Student ID</label>
+                                        <label class="control-label col-md-3">Lecturer ID</label>
                                         <label class="control-label">: <?php echo ($id) ?></label>
                                     </div>
                                     <div>
-                                        <label class="control-label col-md-3">Specialization</label>
-                                        <label class="control-label">: <?php echo ($field) ?></label>
+                                        <label class="control-label col-md-3">Department</label>
+                                        <label class="control-label">: <?php echo ($dept) ?></label>
                                     </div>
                                     <div>
                                         <label class="control-label col-md-3">Gender</label>
@@ -84,7 +86,7 @@ $field = $row['field'];
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-7">
+                        <div class="col-md-12">
                             <div class="panel panel-info">
                                 <div class="panel-heading"> Contact Information </div>
                                 <div class="panel-body">
@@ -104,7 +106,41 @@ $field = $row['field'];
                             </div>
                         </div>
                     </div>
+                    <table id="table" class="table table-hover table-bordered">
+                        <thead>	
+                            <tr>
+                                <th class="text-center">Academic Year</th>
+                                <th class="text-center">Courses</th>
+                                <th class="text-center">Update Results</th>
+                            </tr>
+                        </thead>
+                        <?php
+                        mysql_select_db('student_registration_db');
 
+                        $sql = "SELECT 
+                                lecturer_id,
+                                lecturercourses.course_code,
+                                course_name,
+                                 lecturercourses.academic_year
+                            FROM lecturercourses 
+                            LEFT JOIN courses ON lecturercourses.course_code = courses.course_code
+                            WHERE lecturer_id = '$lec_id'
+                            ORDER BY academic_year";
+
+                        $result = $conn->query($sql);
+                        ?>
+                        <?php
+                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                            echo "<tr>";
+                            
+                            echo "<td class='text-center'>" . $row['academic_year'] . "</td>";
+                            echo "<td>" . $row['course_code'] . " - " . $row['course_name'] . "</td>";
+                            echo "<td class='text-center'> <a href='updateresultslec.php?course_code=" . $row['course_code'] . "'>Update</a></td>";
+                            echo "</tr>";
+                        }
+                        ?>
+
+                    </table>
                 </div> 
             </div>
         </div>

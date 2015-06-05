@@ -1,6 +1,10 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("loginRequired.php");
+require_once("utility.php");
+adminLoginRequired();
+
 ?>
 <?php
 // fill fields
@@ -81,7 +85,7 @@ endif;
     <?php add_head() ?>
     <body> 
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('students') ?>
             <div id="page-wrapper">
                 <div class="container-fluid"><br>
                     <div class="row">
@@ -102,7 +106,7 @@ endif;
                     
                     <div class="row">
                         <div class="col-md-6 col-md-offset-2">
-                            <form class="form-horizontal" action="" method="POST">
+                            <form class="form-horizontal" action="" method="POST" onsubmit="return checkPassword()">
                                 <fieldset>
                                     <div class="form-group">
                                         <label for="inputid" class="col-lg-3 control-label">Student ID</label>
@@ -170,10 +174,20 @@ endif;
                                     <div class="form-group">
                                         <label for="inputfield" class="col-lg-3 control-label">Field</label>
                                         <div class="col-lg-9">
-                                            <input value = "<?php echo($field);?>" required='required' class="form-control input-sm textBorder" id="inputfield" name="inputfield" placeholder="Field of Study" type="text">
+                                            <select required="required" id="inputfield"  name="inputfield" class="form-control input-sm textBorder">
+                                                <option></option>
+                                                <?php
+                                                foreach ($Field_names as $f) {
+                                                    $sel = $field == $f ? "selected" : "";
+                                                    echo "<option value='$f' $sel >$f </option>";
+                                                }
+                                                ?>
+                                            </select>
                                         </div>
                                     </div>
-                                    Leave password fields empty if you do not want to change the password
+                                    <div>
+                                        Leave password fields empty if you do not want to change the password
+                                    </div><br>
                                     <div class="form-group">
                                         <label for="inputpassword" class="col-lg-3 control-label">Password</label>
                                         <div class="col-lg-9">
@@ -209,5 +223,6 @@ endif;
 
             });
         </script>
+        <script>$("#inputfield").select2({placeholder: "Select Specialization Field", allowClear:true});</script>
     </body>
 </html>

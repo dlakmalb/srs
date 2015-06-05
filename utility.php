@@ -43,5 +43,24 @@ function getGradePoint($strGrade) {
         return 0;
     }
 }
+$Field_Doc = array("Civil Engineering" => "civil.pdf",
+            "Computer Engineering" => "computer.pdf",
+            "Electrical Engineering" => "electrical.pdf",
+             "Electronic & Communication Engineering" => "electronic.pdf",
+            "Mechanical Engineering" => "mechanical.pdf",
+            "Mechatronics Engineering" => "mechatronics.pdf",
+            "Textile & Clothing Engineering" => "textile.pdf", 
+            "Agricultural & Plantation Engineering" => "agricultural.pdf"
+        );
 
+$Field_names = array_keys($Field_Doc);
+
+function gradeText($grade)
+{
+    if(is_null($grade) || $grade =="" )
+    {
+        return "Pending";
+    }
+    return $grade;
+}
 ?>

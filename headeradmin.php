@@ -1,6 +1,17 @@
 <?php
+require_once("dbconnection.php");
+require_once("loginRequired.php");
+adminLoginRequired();
+?>
+<?php
+$admin_id = $_SESSION["ADMIN_ID"];
+$sql = "SELECT name FROM admins WHERE admin_id = '$admin_id'";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_array($result, MYSQLI_BOTH);
+$navbar_username = $row['name'];
 
 function add_nav($active = "") {
+    global $navbar_username;
     ?> 
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -16,7 +27,7 @@ function add_nav($active = "") {
         <!-- Top Menu Items -->
         <ul class="nav navbar-right top-nav">
             <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> User <b class="caret"></b></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> <?php echo($navbar_username) ?><b class="caret"></b></a>
                 <ul class="dropdown-menu">
                     <li>
                         <a href="signOut.php"><i class="fa fa-fw fa-power-off"></i> Log Out</a>
@@ -28,7 +39,7 @@ function add_nav($active = "") {
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
                 <li <?php if($active == 'home' || $active == ''){ echo('class="active"');} ?> >
-                    <a href="home.php"><i class="fa fa-fw fa-dashboard"></i> Admin Panel</a>
+                    <a href="home.php"><i class="fa fa-fw fa-home"></i> Admin Panel</a>
                 </li>
                 <li <?php if($active == 'courses'){ echo('class="active"');} ?> >
                     <a href="courses.php"><i class="fa fa-fw fa-book"></i> Courses</a>
@@ -42,14 +53,14 @@ function add_nav($active = "") {
                 <li <?php if($active == 'administrators'){ echo('class="active"');} ?> >
                     <a href="admins.php"><i class="fa fa-fw fa-user-secret"></i> Administrators</a>
                 </li>
-                <li <?php if($active == 'payments'){ echo('class="active"');} ?> >
-                    <a href="bootstrap-grid.html"><i class="fa fa-fw fa-money"></i> Payments</a>
+                <li <?php if($active == 'paymentsadmin'){ echo('class="active"');} ?> >
+                    <a href="paymentsadmin.php"><i class="fa fa-fw fa-money"></i> Payments</a>
                 </li>
                 <li <?php if($active == 'academic years'){ echo('class="active"');} ?> >
                     <a href="academicyears.php"><i class="fa fa-fw fa-calendar"></i> Academic Years</a>
                 </li>
-                <li <?php if($active == 'about'){ echo('class="active"');} ?> >
-                    <a href="bootstrap-grid.html"><i class="fa fa-fw fa-info-circle"></i> About</a>
+                <li <?php if($active == 'comcourses'){ echo('class="active"');} ?> >
+                    <a href="compulsorycoursesadmin.php"><i class="fa fa-fw fa-info-circle"></i> Compulsory Courses</a>
                 </li>
             </ul>
         </div>

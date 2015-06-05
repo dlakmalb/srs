@@ -38,7 +38,7 @@ if (count($condition) > 0) {
     <?php add_head() ?>
     <body> 
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('program') ?>
 
             <div id="page-wrapper">
                 <div class="container-fluid">
@@ -56,8 +56,11 @@ if (count($condition) > 0) {
                                 <div class="panel-heading"> Overall Results </div>
                                 <div class="panel-body">
                            <?php
-                            $sql = "SELECT      grade, credits
-                                    FROM courses join registrations on courses.course_code=registrations.course_code ";
+                            $sql = "SELECT  grade, 
+                                            credits
+                                    FROM courses 
+                                    JOIN registrations on courses.course_code=registrations.course_code 
+                                    WHERE student_id='{$_SESSION['STUDENT_ID']}' ";
 
                             $result = $conn->query($sql);
                             $totalGradePoints = 0.0;
@@ -81,8 +84,10 @@ if (count($condition) > 0) {
                             {
                                 $gpa = $totalGradePoints / $total5_6Credits ;
                             }
-                            echo($total5_6Credits." ".$totalCredits." ".$gpa);
                             ?>
+                                    <div >Overall Credits : <?php echo $totalCredits; ?> </div>
+                                    <div >GPA Credits  : <?php echo $total5_6Credits; ?> </div>
+                                    <div >Overall GPA : <?php echo $gpa; ?> </div>
                                     
                                 </div>
                             </div>
@@ -92,7 +97,7 @@ if (count($condition) > 0) {
                     <div class="row">
                         <div class="col-md-12">
                             <div class="panel panel-info">
-                                <div class="panel-heading"> Search Programmes </div>
+                                <div class="panel-heading"> Search My Programme </div>
                                 <div class="panel-body">
                                     <form class="form-horizontal" action="" method="GET">
                                         <fieldset>
@@ -189,14 +194,13 @@ if (count($condition) > 0) {
                     <table id="table" class="table table-hover table-bordered">
                         <thead>	
                             <tr>
-                                <th>Level</th>
-                                <th>Course</th>
-                                <!--<th>Course Name</th>-->
-                                <th>Department</th>
-                                <th>Academic Year </th>
-                                <th>Credits</th>
-                                <th>Course Fee</th>
-                                <th>Results</th>
+                                <th class="text-center">Level</th>
+                                <th class="text-center">Course</th>
+                                <th class="text-center">Department</th>
+                                <th class="text-center">Academic Year </th>
+                                <th class="text-center">Credits</th>
+                                <th class="text-center">Course Fee</th>
+                                <th class="text-center">Results</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -213,7 +217,7 @@ if (count($condition) > 0) {
                                         credits,
                                         SUBSTR(courses.course_code,3,1) as category
                                     FROM courses join registrations on courses.course_code=registrations.course_code
-                            $where_clause  ORDER BY 'level'";
+                            $where_clause  ORDER BY level";
 
                             $result = $conn->query($sql);
                             $categoryCredits=array("X" => 0, "Y" => 0, "Z" => 0, "J" => 0,
@@ -236,14 +240,13 @@ if (count($condition) > 0) {
                                 
                                 echo "<tr>";
 
-                                echo "<td>" . $row['level'] . "</td>";
+                                echo "<td class='text-center'>" . $row['level'] . "</td>";
                                 echo "<td>" . $row['course_code'] . "-" . $row['course_name'] . "</td>";
-                                // echo "<td>" . $row['course_name'] . "</td>";
                                 echo "<td>" . $row['department'] . "</td>";
-                                echo "<td>" . $row['academic_year'] . "</td>";
-                                echo "<td>" . $row['credits'] . "</td>";
-                                echo "<td>" . number_format(calc_course_fee($row['level'], $row['credits']), 2) . "</td>";
-                                echo "<td>" . $row['grade'] . "</td>";
+                                echo "<td class='text-center'>" . $row['academic_year'] . "</td>";
+                                echo "<td class='text-center'>" . $row['credits'] . "</td>";
+                                echo "<td class='text-center'>" . number_format(calc_course_fee($row['level'], $row['credits']), 2) . "</td>";
+                                echo "<td class='text-center'>" . gradeText($row['grade']) . "</td>";
                                 echo "</tr>";
                             }
                             $totalCredits = array_sum($categoryCredits);

@@ -7,7 +7,7 @@ adminLoginRequired();
 <!DOCTYPE html>
 <html>
     <?php add_head() ?>
-    <body>  
+    <body background="images/background.jpg">  
         <div id="wrapper">
             <?php add_nav() ?>
 

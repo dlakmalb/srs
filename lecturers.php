@@ -1,6 +1,8 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?> 
 <?php
 $condition = [];
@@ -36,7 +38,7 @@ if (count($condition) > 0) {
     <?php add_head() ?>
     <body> 
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('lecturers') ?>
 
             <div id="page-wrapper">
                 <div class="container-fluid">
@@ -185,7 +187,7 @@ if (count($condition) > 0) {
                             echo "<td>" . $row['salutation'] . " " . $row['name'] . "</td>";
                             echo "<td>" . $row['department'] . "</td>";
                             echo "<td>" . $row['nic'] . "</td>";
-                            echo "<td> <a href='lecturersedit.php?lecturer_id=".$row['lecturer_id']."'>edit</a></td>";
+                            echo "<td> <a href='lecturersedit.php?lecturer_id=".$row['lecturer_id']."'>Edit</a></td>";
 
                             echo "</tr>";
                         }

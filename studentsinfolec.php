@@ -1,82 +1,76 @@
 <?php
 require_once("dbconnection.php");
-require_once("headeradmin.php");
+require_once("headerlec.php");
 require_once("utility.php");
 require_once("loginRequired.php");
-adminLoginRequired();
-?>
+lecturerLoginRequired();
+?> 
 <?php
 $condition = [];
-$code = $name = $dept = $credit = $level = "";
+$id = $name = $field = $nic = "";
 
-if (isset($_GET["selectcode"]) && strlen($_GET["selectcode"]) > 0) {
-    $hasCode = true;
-    $code = $_GET["selectcode"];
-    $condition[] = " courses.course_code = '$code'";
+if (isset($_GET["selectid"]) && strlen($_GET["selectid"]) > 0) {
+    $hasId = true;
+    $id = $_GET["selectid"];
+    $condition[] = " students.student_id = '$id'";
 }
-if (isset($_GET["selectdept"]) && strlen($_GET["selectdept"]) > 0) {
-    $hasDept = true;
-    $dept = $_GET["selectdept"];
-    $condition[] = " courses.department = '$dept'";
+if (isset($_GET["selectname"]) && strlen($_GET["selectname"]) > 0) {
+    $hasName = true;
+    $name = $_GET["selectname"];
+    $condition[] = " students.name = '$name'";
 }
-if (isset($_GET["selectcredit"]) && strlen($_GET["selectcredit"]) > 0) {
-    $hasCredit = true;
-    $credit = $_GET["selectcredit"];
-    $condition[] = " courses.credits = '$credit'";
+if (isset($_GET["selectfield"]) && strlen($_GET["selectfield"]) > 0) {
+    $hasField = true;
+    $field = $_GET["selectfield"];
+    $condition[] = " students.field = '$field'";
 }
-if (isset($_GET["selectlevel"]) && strlen($_GET["selectlevel"]) > 0) {
-    $hasLevel = true;
-    $level = $_GET["selectlevel"];
-    $condition[] = " courses.level = '$level'";
+if (isset($_GET["selectnic"]) && strlen($_GET["selectnic"]) > 0) {
+    $hasNic = true;
+    $nic = $_GET["selectnic"];
+    $condition[] = " students.nic = '$nic'";
 }
 $where_clause = "";
 if (count($condition) > 0) {
     $where_clause = "Where " . implode(" AND ", $condition);
 }
 ?>
-
 <!DOCTYPE html>
 <html>
     <?php add_head() ?>
     <body> 
         <div id="wrapper">
-            <?php add_nav('courses') ?>
+            <?php add_nav('stuinfolec') ?>
 
             <div id="page-wrapper">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-12">
                             <h1 class="page-header">
-                                Courses Information
+                                Student's Information
                             </h1>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-offset-3 col-md-2">
-                            <a class="btn btn-info btn-block" href='coursesadd.php'>Add Course</a> <br/>
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="panel panel-info">
-                                <div class="panel-heading"> Search Courses </div>
+                                <div class="panel-heading"> Search Students </div>
                                 <div class="panel-body">
                                     <form class="form-horizontal" action="" method="GET">
                                         <fieldset>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="selectcode" class="col-md-2 control-label">Course</label>
+                                                    <label for="selectid" class="col-md-2 control-label">Student ID</label>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <select class="form-control input-sm" id="selectcode" name="selectcode">
+                                                    <select class="form-control input-sm textBorder" id="selectid" name="selectid">
                                                         <option> </option>
                                                         <?php
-                                                        // load course codes and names to select box
-                                                        $sql = "SELECT course_code, course_name FROM `courses`";
+                                                        // load student id to select box
+                                                        $sql = "SELECT student_id FROM `students`";
                                                         $result = mysqli_query($conn, $sql);
                                                         while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
-                                                            $sel = $row['course_code'] == $code ? "selected" : "";
-                                                            echo "<option $sel value='" . $row['course_code'] . "'>" . $row['course_code'] . " - " . $row['course_name'] . "</option>";
+                                                            $sel = $row['student_id'] == $id ? "selected" : "";
+                                                            echo "<option $sel value='" . $row['student_id'] . "'>" . $row['student_id'] . "</option>";
                                                         }
                                                         "</select>"
                                                         ?>
@@ -85,18 +79,18 @@ if (count($condition) > 0) {
                                             </div>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="selectdept" class="col-md-2 control-label">Department</label>
+                                                    <label for="selectname" class="col-md-2 control-label">Student Name</label>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <select class="form-control input-sm" id="selectdept" name="selectdept">
+                                                    <select class="form-control input-sm textBorder" id="selectname" name="selectname">
                                                         <option> </option>
                                                         <?php
-                                                        // load course codes and names to select box
-                                                        $sql = "SELECT DISTINCT department FROM `courses`";
+                                                        // load student names to select box
+                                                        $sql = "SELECT name FROM `students`";
                                                         $result = mysqli_query($conn, $sql);
                                                         while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
-                                                            $sel = $row['department'] == $dept ? "selected" : "";
-                                                            echo "<option $sel value='" . $row['department'] . "'>" . $row['department'] . "</option>";
+                                                            $sel = $row['name'] == $name ? "selected" : "";
+                                                            echo "<option $sel value='" . $row['name'] . "'>" . $row['name'] . "</option>";
                                                         }
                                                         "</select>"
                                                         ?>
@@ -105,34 +99,36 @@ if (count($condition) > 0) {
                                             </div>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="selectcredit" class="col-md-2 control-label">Credit</label>
+                                                    <label for="selectfield" class="col-md-2 control-label">Field</label>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <select class="form-control input-sm" id="selectcredit" value="<?php echo $credit; ?>" name="selectcredit">
+                                                    <select class="form-control input-sm" id="selectfield" name="selectfield">
+                                                        <option> </option>
                                                         <?php
-                                                        $credits = [" ", "0", "3", "6", "9"];
-                                                        foreach ($credits as $crdt) {
-                                                            $sel = $crdt == $credit ? "selected" : "";
-                                                            echo ("<option $sel>$crdt</option>");
+                                                        $sql = "SELECT DISTINCT field FROM `students`";
+                                                        $result = mysqli_query($conn, $sql);
+                                                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                                                            $sel = $row['field'] == $field ? "selected" : "";
+                                                            echo "<option $sel value='" . $row['field'] . "'>" . $row['field'] . "</option>";
                                                         }
+                                                        "</select>"
                                                         ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="form-group">
                                                 <div>
-                                                    <label for="selectlevel" class="col-md-2 control-label">Level</label>
+                                                    <label for="selectnic" class="col-md-2 control-label">NIC Number</label>
                                                 </div>
                                                 <div class="col-md-4">
-                                                    <select class="form-control input-sm" id="selectlevel" name="selectlevel">
+                                                    <select class="form-control input-sm textBorder" id="selectnic" name="selectnic">
                                                         <option> </option>
                                                         <?php
-                                                        // load course codes and names to select box
-                                                        $sql = "SELECT DISTINCT level FROM `courses`";
+                                                        $sql = "SELECT nic FROM `students`";
                                                         $result = mysqli_query($conn, $sql);
                                                         while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
-                                                            $sel = $row['level'] == $level ? "selected" : "";
-                                                            echo "<option $sel value='" . $row['level'] . "'>" . $row['level'] . "</option>";
+                                                            $sel = $row['nic'] == $nic ? "selected" : "";
+                                                            echo "<option $sel value='" . $row['nic'] . "'>" . $row['nic'] . "</option>";
                                                         }
                                                         "</select>"
                                                         ?>
@@ -144,8 +140,7 @@ if (count($condition) > 0) {
                                                     <button type="submit" class="btn btn-primary btn-block">Search</button>
                                                 </div>   
                                                 <div class="col-md-2">
-                                                    <a href="courses.php" type="reset" class="btn btn-default btn-block">Clear</a>
-
+                                                    <a href="studentsinfolec.php" type="reset" class="btn btn-default btn-block">Clear</a>
                                                 </div>
                                             </div>
                                         </fieldset>
@@ -157,12 +152,10 @@ if (count($condition) > 0) {
                     <table id="table" class="table table-hover table-bordered">
                         <thead>	
                             <tr>
-                                <th>Course</th>
-                                <th>Department</th>
-                                <th>Level</th>
-                                <th>Credits</th>
-                                <th>Course Fee</th>
-                                <th>Edit</th>
+                                <th>Student ID</th>
+                                <th>Student Name</th>
+                                <th>Field</th>
+                                <th>NIC Number</th>
                                 <th>View</th>
                             </tr>
                         </thead>
@@ -170,38 +163,37 @@ if (count($condition) > 0) {
                         mysql_select_db('student_registration_db');
 
                         $sql = "SELECT 
-                                course_code,
-                                course_name,
-                                department,
-                                `level`,
-                                credits
-                            FROM courses
-                            $where_clause ORDER BY level";
+                                student_id,
+                                name,
+                                field,
+                                nic
+                            FROM students
+                            $where_clause ORDER BY student_id";
 
                         $result = $conn->query($sql);
                         ?>
                         <?php
-                        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
+                        while ($row = mysqli_fetch_array($result, MYSQLI_BOTH)) {
                             echo "<tr>";
 
-                            echo "<td>" . $row['course_code'] . " - " . $row['course_name'] . "</td>";
-                            echo "<td>" . $row['department'] . "</td>";
-                            echo "<td>" . $row['level'] . "</td>";
-                            echo "<td>" . $row['credits'] . "</td>";
-                            echo "<td>" . number_format(calc_course_fee($row['level'], $row['credits']), 2) . "</td>";
-                            echo "<td> <a href='coursesedit.php?course_code=" . $row['course_code'] . "'>Edit</a></td>";
-                            echo "<td> <a href='requisitecourses.php?course_code=" . $row['course_code'] . "'>More Info</a></td>";
+                            echo "<td>" . $row['student_id'] . "</td>";
+                            echo "<td>" . $row['name'] . "</td>";
+                            echo "<td>" . $row['field'] . "</td>";
+                            echo "<td>" . $row['nic'] . "</td>";
+                            echo "<td> <a href='studentinfolec.php?student_id=" . $row['student_id'] . "'>More Info</a></td>";
 
                             echo "</tr>";
                         }
                         ?>
+
                     </table>
                 </div> 
             </div>
         </div>
-        <script>$("#selectcode").select2({placeholder: "Select Course", allowClear: true});</script>
-        <script>$("#selectdept").select2({placeholder: "Select Department", allowClear: true});</script>
-        <script>$("#selectcredit").select2({placeholder: "Select Credit", allowClear: true});</script>
+        <script>$("#selectid").select2({placeholder: "Select Student ID", allowClear: true});</script>
+        <script>$("#selectname").select2({placeholder: "Select Student Name", allowClear: true});</script>
+        <script>$("#selectfield").select2({placeholder: "Select Field", allowClear: true});</script>
+        <script>$("#selectnic").select2({placeholder: "Select NIC", allowClear: true});</script>
         <script>$("#selectlevel").select2({placeholder: "Select Level", allowClear: true});</script>
     </body>
 </html>

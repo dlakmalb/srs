@@ -1,6 +1,8 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?>
 <?php
 // get user inputs
@@ -15,10 +17,10 @@ if (isset($_POST['register'])):
     $Telephone = ($_POST['inputtelephone']);
     $email = ($_POST['inputemail']);
     $dept = ($_POST['inputdept']);
-    $Password = ($_POST['inputpassword']);
+    $password = ($_POST['inputpassword']);
 
     $sql = "INSERT INTO lecturers (lecturer_id, salutation, name, birthday, nic, gender, address, telephone, email, department, password)
-            VALUES('" . $id . "', '" . $salutation . "', '" . $name . "', '" . $birthday . "', '" . $nic . "', '" . $Gender . "',  '" . $address . "', '" . $Telephone . "', '" . $email . "', '" . $dept . "', '" . $Password . "')";
+            VALUES('" . $id . "', '" . $salutation . "', '" . $name . "', '" . $birthday . "', '" . $nic . "', '" . $Gender . "',  '" . $address . "', '" . $Telephone . "', '" . $email . "', '" . $dept . "', md5('" . $password . "'))";
 
     $result = $conn->query($sql);
     if ($result && $conn->affected_rows > 0) {
@@ -36,7 +38,7 @@ endif;
     <?php add_head() ?>
     <body> 
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('lecturers') ?>
             <div id="page-wrapper">
                 <div class="container-fluid"><br>
                     <div class="row">
@@ -48,7 +50,7 @@ endif;
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-2">
-                            <form class="form-horizontal" action="" method="POST">
+                            <form class="form-horizontal" action="" method="POST" onsubmit="return checkPassword()">
                                 <fieldset>
                                     <div class="form-group">
                                         <label for="inputlecid" class="col-lg-3 control-label">Lecturer ID</label>

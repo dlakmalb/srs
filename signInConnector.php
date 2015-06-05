@@ -30,7 +30,7 @@ $rowcount = mysqli_fetch_array($result, MYSQLI_BOTH);
 if ($rowcount) { // username and password match
     $_SESSION['LECTURER_ID'] = $rowcount['lecturer_id']; // accept login
 
-    header("Location: home.php");
+    header("Location: homelec.php");
     exit();
 } 
 

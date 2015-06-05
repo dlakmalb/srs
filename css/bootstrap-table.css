@@ -98,7 +98,7 @@
 
 /* the same color with .active */
 .fixed-table-container tbody .selected td {
-    background-color: #464545;
+    background-color: #eee;
 }
 
 .fixed-table-container .bs-checkbox {

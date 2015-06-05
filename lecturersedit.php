@@ -1,6 +1,8 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?>
 <?php
 // fill fields
@@ -46,8 +48,15 @@ if (isset($_POST['update'])):
     $telephone = ($_POST['inputtelephone']);
     $email = ($_POST['inputemail']);
     $dept = ($_POST['inputdept']);
-    $Password = ($_POST['inputpassword']);
-
+//    $Password = ($_POST['inputpassword']);
+    $password_update="";
+    if(isset($_POST['inputpassword']) && strlen($_POST['inputpassword']) >0 )
+    {
+        $password = ($_POST['inputpassword']);
+        $password_hash= md5($password);
+        $password_update=" , password='$password_hash' ";
+    }
+    
     $sql = "UPDATE lecturers
             SET lecturer_id = '$id',
                 salutation = '$salutation',
@@ -58,17 +67,15 @@ if (isset($_POST['update'])):
                 birthday = '$birthday',
                 telephone = '$telephone',
                 email = '$email',
-                department = '$dept',
-                password = '$password'
+                department = '$dept' ".$password_update. "
             WHERE lecturer_id = '$id'";
 
     $result = $conn->query($sql);
-    if ($result && $conn->affected_rows > 0) {
+    if ($result) {
         header("Location: lecturers.php");
         exit;
     } else {
-        header("Location: lecturers.php");
-        exit;
+        $error_message = $conn->error();
     }
 endif;
 ?>
@@ -77,7 +84,7 @@ endif;
     <?php add_head() ?>
     <body> 
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('lecturers') ?>
             <div id="page-wrapper">
                 <div class="container-fluid"><br>
                     <div class="row">
@@ -87,9 +94,17 @@ endif;
                             </h1>
                         </div>
                     </div>
+                    
+                    <!-- Error Message -->
+                    <?php if(isset($error_message)): ?>
+                    <div class="well">
+                        <?php echo($error_message); ?>
+                    </div>
+                    <?php endif; ?>
+                    
                     <div class="row">
                         <div class="col-md-6 col-md-offset-2">
-                            <form class="form-horizontal" action="" method="POST">
+                            <form class="form-horizontal" action="" method="POST" onsubmit="return checkPassword()">
                                 <fieldset>
                                     <div class="form-group">
                                         <label for="inputlecid" class="col-lg-3 control-label">Lecturer ID</label>
@@ -176,16 +191,19 @@ endif;
                                             <input value = "<?php echo ($dept) ?>" required='required' class="form-control input-sm textBorder" id="inputdept" name="inputdept" placeholder="Department" type="text">
                                         </div>
                                     </div>
+                                    <div>
+                                        Leave password fields empty if you do not want to change the password
+                                    </div><br>
                                     <div class="form-group">
                                         <label for="inputpassword" class="col-lg-3 control-label">Password</label>
                                         <div class="col-lg-9">
-                                            <input value = "<?php echo ($password) ?>" required='required' class="form-control input-sm textBorder" id="inputpassword" name="inputpassword" placeholder="Password" type="password">
+                                            <input value = "" class="form-control input-sm textBorder" id="inputpassword" name="inputpassword" placeholder="Password" type="password">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="inputpasswordconfirm" class="col-lg-3 control-label">Confirm</label>
                                         <div class="col-lg-9">
-                                            <input value = "<?php echo ($password) ?>" required='required' class="form-control input-sm textBorder" id="inputpasswordconfirm" name="inputpasswordconfirm" placeholder="Confirm Password" type="password">
+                                            <input value = "" class="form-control input-sm textBorder" id="inputpasswordconfirm" name="inputpasswordconfirm" placeholder="Confirm Password" type="password">
                                         </div>
                                     </div>
                                     <div class="form-group">

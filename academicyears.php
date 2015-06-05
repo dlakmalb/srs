@@ -1,6 +1,8 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?> 
 <?php
 // get user inputs
@@ -16,10 +18,26 @@ if (isset($_POST['register'])):
         header("Location: academicyears.php");
         exit;
     } else {
-        echo '<script language = "javascript">';
-        echo 'alert("Academic Year Already Exist")';
-        echo '</script>';
+        $showError = true;
+       
     }
+endif;
+
+// enable/disable
+if (isset($_POST['enable']) || isset($_POST['disable']) ):
+    $year = ($_POST['year']);
+    $target= "disable";
+    if(isset($_POST['enable']))
+    {
+        $target="enable";
+    }
+
+    $sql = "UPDATE academicyear SET can_register = '{$target}'
+            WHERE academic_year='{$year}' ";
+
+    $result = $conn->query($sql);
+    header("Location: academicyears.php");
+    exit();
 endif;
 
 // add to table
@@ -36,8 +54,15 @@ $result = $conn->query($sql);
 <html>
     <?php add_head() ?>
     <body> 
+        <?php
+        if(isset($showError) && $showError == true):
+            echo '<script language = "javascript">';
+            echo 'alert("Academic Year Already Exist")';
+            echo '</script>';
+        endif;
+        ?>
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('academic years') ?>
 
             <div id="page-wrapper">
                 <div class="container-fluid">
@@ -86,10 +111,9 @@ $result = $conn->query($sql);
                     <table id="table" class="table table-hover table-bordered">
                         <thead>	
                             <tr>
-                                <th>Academic Year</th>                                
-                                <th>Status</th>                                
-                                <th>Edit</th>
-                                <th>Delete</th>
+                                <th class="text-center">Academic Year</th>                                
+                                <th class="text-center">Status</th>                                
+                                <th colspan=2 class="text-center">Change Status</th>
                             </tr>
                         </thead>
 
@@ -97,18 +121,37 @@ $result = $conn->query($sql);
                         while ($row = mysqli_fetch_array($result, MYSQLI_BOTH)) {
                             echo "<tr>";
 
-                            echo "<td>" . $row['academic_year'] . "</td>";
-                            echo "<td>" . $row['can_register'] . "</td>";
-                            echo "<td> <a href=''>edit</a></td>";
-                            echo "<td> <a href=''>delete</a></td>";
+                            echo "<td class='text-center'>" . $row['academic_year'] . "</td>";
+                            echo "<td class='text-center'>" . $row['can_register'] . "</td>";
 
+                            if ($row["can_register"] != "enable") {
+                                ?>
+                                <td class='text-center'>
+                                    <form method="post" >
+                                        <input type="hidden" name="year" value="<?php echo $row['academic_year']; ?>" />
+                                        <input type="submit" name="enable" value="Enable" class="btn btn-sm btn-link" />
+                                    </form>
+                                </td>
+                                <td> </td>
+                                <?php
+                            } else {
+                                ?>
+                                <td> </td>
+                                <td class='text-center'>
+                                    <form method="post" >
+                                        <input type="hidden"  name="year"  value="<?php echo $row['academic_year']; ?>" />
+                                        <input type="submit" name="disable" value="Disable" class="btn btn-sm btn-link" />
+                                    </form>
+                                </td>
+                            <?php
+                            }
                             echo "</tr>";
                         }
-                        ?>
-                        
+                        ?>                        
                     </table>
                 </div> 
             </div>
         </div>
+        
     </body>
 </html>

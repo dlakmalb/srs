@@ -2,6 +2,7 @@
 require_once("dbconnection.php");
 require_once("headeradmin.php");
 require_once("loginRequired.php");
+require_once("utility.php");
 adminLoginRequired();
 ?>
 <?php
@@ -16,14 +17,14 @@ if (isset($_POST['register'])):
     $Telephone = ($_POST['inputtelephone']);
     $email = ($_POST['inputemail']);
     $field = ($_POST['inputfield']);
-    $Password = ($_POST['inputpassword']);
+    $password = ($_POST['inputpassword']);
 
     $sql = "INSERT INTO students (student_id, name, birthday, nic, gender, address, telephone, email, field, password)
             VALUES('" . $id . "', '" . $name . "', '" . $birthday . "', '" . $nic . "', '" . $Gender . "',  '" . $address . "', '" . $Telephone . "', '" . $email . "', '" . $field . "',md5('" . $password . "'))";
 
     $result = $conn->query($sql);
     if ($result && $conn->affected_rows > 0) {
-        header("Location: academicyears.php");
+        header("Location: students.php");
         exit;
     } else {
         echo '<script language = "javascript">';
@@ -37,7 +38,7 @@ endif;
     <?php add_head() ?>
     <body> 
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('students') ?>
             <div id="page-wrapper">
                 <div class="container-fluid"><br>
                     <div class="row">
@@ -103,7 +104,14 @@ endif;
                                     <div class="form-group">
                                         <label for="inputfield" class="col-lg-3 control-label">Field</label>
                                         <div class="col-lg-9">
-                                            <input required='required' class="form-control input-sm textBorder" id="inputfield" name="inputfield" placeholder="Field of Study" type="text">
+                                            <select required="required" id="inputfield"  name="inputfield" class="form-control input-sm textBorder">
+                                                <option></option>
+                                                <?php
+                                                foreach ($Field_names as $field) {
+                                                    echo "<option value='$field' >$field </option>";
+                                                }
+                                                ?>
+                                            </select>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -143,8 +151,8 @@ endif;
                 );
 
             });
-            
 
         </script>
+        <script>$("#inputfield").select2({placeholder: "Select Specialization Field", allowClear:true});</script>
     </body>
 </html>

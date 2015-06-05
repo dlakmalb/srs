@@ -18,12 +18,16 @@ $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_array($result, MYSQL_ASSOC);
 $can_register = false;
 
-if($row)
-{
+if ($row) {
     $can_register = true;
-    $registration_year= $row['academic_year'];
+    $registration_year = $row['academic_year'];
 }
 
+if(!$can_register)
+{
+    header("Location: coursesregstunotavailable.php");
+    exit;
+}
 
 /// -------------- retrieving currently registered courses for this year
 $sql = "SELECT 
@@ -41,8 +45,8 @@ $result = $conn->query($sql);
 
 $registeredCourses = array();
 $registered_course_ids = array();
-$categoryCredits=array("X" => 0, "Y" => 0, "Z" => 0, "J" => 0,
-                        "M" => 0, "I" => 0, "E" => 0, "L" => 0, "K" => 0);
+$categoryCredits = array("X" => 0, "Y" => 0, "Z" => 0, "J" => 0,
+    "M" => 0, "I" => 0, "E" => 0, "L" => 0, "K" => 0);
 while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
     $registeredCourses[] = $row;
     $registered_course_ids[] = $row['course_code'];
@@ -52,137 +56,114 @@ $totalRegisteredCredits = array_sum($categoryCredits);
 
 
 // Handle registeration and de registeration on post
-if($_SERVER['REQUEST_METHOD'] == 'POST')
-{
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $course = $_POST['course'];
     $year = $_POST['year'];
 
     $date = date('Y-m-d');
-    
+
     //get currently registered subjects
     $all_registered_courses = array();
     $sql = "select course_code from registrations 
                 where student_id='$student_id'";
     $result = mysqli_query($conn, $sql);
-    while($row = mysqli_fetch_array($result, MYSQL_ASSOC))
-    {
+    while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
         $all_registered_courses[] = $row["course_code"];
     }
 
-    if(isset($_POST['register']))
-    {
+    if (isset($_POST['register'])) {
         //find prerequisites
         $sql = "select prerequisite_course_code from courseprerequisites
                 where course_code='$course'";
-        
+
         $result = mysqli_query($conn, $sql);
         $prerequisites = array();
-        while($row = mysqli_fetch_array($result, MYSQL_ASSOC))
-        {
+        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
             $prerequisites[] = $row["prerequisite_course_code"];
         }
-        
+
         //find co-requisites
         $sql = "select corequisite_course_code from coursecorequisites
                 where course_code='$course'";
-        
+
         $result = mysqli_query($conn, $sql);
         $corequisites = array();
-        while($row = mysqli_fetch_array($result, MYSQL_ASSOC))
-        {
+        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
             $corequisites[] = $row["corequisite_course_code"];
         }
-        
+
         //find credit cout of the course
         $sql = "select credits from courses where course_code='$course'";
         $result = mysqli_query($conn, $sql);
         $row = mysqli_fetch_array($result, MYSQL_ASSOC);
         $course_credit_count = $row["credits"];
-        
-        
+
+
         //---------- check if course registration is acceptable
         $has_error = false;
         //check if prerequisites are met
-        if(! $has_error)
-        {
+        if (!$has_error) {
             $previous_regs = array_diff($all_registered_courses, $registered_course_ids);
             $unmet_prereqs = array_diff($prerequisites, $previous_regs);
-            if(count($unmet_prereqs) > 0)
-            {
+            if (count($unmet_prereqs) > 0) {
                 $error_message = "Course pre-requisites are not met";
                 $has_error = true;
             }
         }
-        
-        if((!$has_error) && (!$can_register) )
-        {
+
+        if ((!$has_error) && (!$can_register)) {
             $error_message = "Registrations are not allowed right now";
             $has_error = true;
         }
-        
-        if(! $has_error)
-        {
+
+        if (!$has_error) {
             //check if co-requisites are met
-            $unmet_coreqs= array_diff($corequisites, $all_registered_courses);
-            if(count($unmet_coreqs) > 0)
-            {
+            $unmet_coreqs = array_diff($corequisites, $all_registered_courses);
+            if (count($unmet_coreqs) > 0) {
                 $error_message = "Course co-requisites are not met";
                 $has_error = true;
             }
         }
-        
-        if(! $has_error)
-        {
-            if($course_credit_count + $totalRegisteredCredits > MAX_CREDITS_PER_YEAR)
-            {
+
+        if (!$has_error) {
+            if ($course_credit_count + $totalRegisteredCredits > MAX_CREDITS_PER_YEAR) {
                 $error_message = "Too many credits per year";
                 $has_error = true;
             }
         }
-        
-        if(!$has_error)
-        {
-            $fee= $_POST['fee'];
+
+        if (!$has_error) {
+            $fee = $_POST['fee'];
             $sql = "insert into registrations(student_id,academic_year,course_code,date,course_fee)
                 values('$student_id','$year','$course','$date',$fee)";
             $result = mysqli_query($conn, $sql);
         }
-        
-    }
-    elseif (isset($_POST['deregister']) )
-    {
+    } elseif (isset($_POST['deregister'])) {
         //find prerequisites
         $sql = "select course_code from coursecorequisites
                 where corequisite_course_code='$course'";
 
         $result = mysqli_query($conn, $sql);
         $courses_requiring_course = array();
-        while($row = mysqli_fetch_array($result, MYSQL_ASSOC))
-        {
+        while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
             $courses_requiring_course[] = $row["course_code"];
         }
-        
+
         $unmet_coreqs = array_intersect($courses_requiring_course, $registered_course_ids);
-        if(count($unmet_coreqs) > 0 )
-        {
+        if (count($unmet_coreqs) > 0) {
             $error_message = "Cannot deregister the course. Other pending registrations require this course.";
-        }
-        else 
-        {
-            $sql ="DELETE from registrations where student_id='$student_id' AND course_code ='$course' AND academic_year = '$year' ";
+        } else {
+            $sql = "DELETE from registrations where student_id='$student_id' AND course_code ='$course' AND academic_year = '$year' ";
             $result = mysqli_query($conn, $sql);
         }
-
     }
 }
-    
+
 
 // end handling register/deregister
 ?>
 
 <?php
-
-
 /// ----------  retrieving currently registered courses for this year - AGAIN - after update
 $sql = "SELECT 
         courses.course_code,
@@ -198,8 +179,8 @@ $sql = "SELECT
 $result = $conn->query($sql);
 
 $registeredCourses = array();
-$categoryCredits=array("X" => 0, "Y" => 0, "Z" => 0, "J" => 0,
-                        "M" => 0, "I" => 0, "E" => 0, "L" => 0, "K" => 0);
+$categoryCredits = array("X" => 0, "Y" => 0, "Z" => 0, "J" => 0,
+    "M" => 0, "I" => 0, "E" => 0, "L" => 0, "K" => 0);
 while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
     $registeredCourses[] = $row;
     $categoryCredits[$row['category']] += $row['credits'];
@@ -243,7 +224,6 @@ $where_clause = "";
 if (count($condition) > 0) {
     $where_clause = "Where " . implode(" AND ", $condition);
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -251,14 +231,23 @@ if (count($condition) > 0) {
     <?php add_head() ?>
     <body> 
         <div id="wrapper">
-            <?php add_nav() ?>
+            <?php add_nav('courseregistration') ?>
 
             <div id="page-wrapper">
                 <div class="container-fluid">
                     <div class="row">
                         <div class="col-lg-12">
                             <h1 class="page-header">
-                                Registration for <?php echo($registration_year); ?> Academic Year
+                                <?php if ($can_register == true) { ?>
+                                    Registration for
+                                    <?php
+                                    echo ($registration_year);
+                                } else {
+                                    ?>
+                                    <?php
+                                    echo 'Cannot Allow to Register for this';
+                                }
+                                ?> Academic Year
                             </h1>
                         </div>
                     </div>
@@ -278,7 +267,7 @@ if (count($condition) > 0) {
                                                         <select class="form-control input-sm" id="selectcode" name="selectcode">
                                                             <option> </option>
                                                             <?php
-                                                            // load course codes and names to select box
+// load course codes and names to select box
                                                             $sql = "SELECT course_code, course_name FROM `courses`";
                                                             $result = mysqli_query($conn, $sql);
                                                             while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
@@ -298,7 +287,7 @@ if (count($condition) > 0) {
                                                         <select class="form-control input-sm" id="selectdept" name="selectdept">
                                                             <option> </option>
                                                             <?php
-                                                            // load course codes and names to select box
+// load course codes and names to select box
                                                             $sql = "SELECT DISTINCT department FROM `courses`";
                                                             $result = mysqli_query($conn, $sql);
                                                             while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
@@ -334,7 +323,7 @@ if (count($condition) > 0) {
                                                         <select class="form-control input-sm" id="selectlevel" name="selectlevel">
                                                             <option> </option>
                                                             <?php
-                                                            // load course codes and names to select box
+// load course codes and names to select box
                                                             $sql = "SELECT DISTINCT level FROM `courses`";
                                                             $result = mysqli_query($conn, $sql);
                                                             while ($row = mysqli_fetch_array($result, MYSQL_ASSOC)) {
@@ -362,7 +351,7 @@ if (count($condition) > 0) {
                             </div>
                             <div class="col-md-5">
                                 <div class="panel panel-info">
-                                    <div class="panel-heading"> Search Courses </div>
+                                    <div class="panel-heading"> Credit Details </div>
                                     <div class="panel-body">
                                         <div class="row">
                                             <label class="col-md-12 col-md-offset-1">Maximum credit count per year is 45 credits</label>
@@ -426,25 +415,25 @@ if (count($condition) > 0) {
                             </div>
                         </div>
                     </div>
-                    <?php if(isset($error_message)): ?>
-                    <div class="well">
-                        <span class="text-danger" > Error : 
-                            <?php echo($error_message); ?>
-                        </span>
-                    </div>
-                    <?php endif;?>
-                    
+                    <?php if (isset($error_message)): ?>
+                        <div class="well">
+                            <span class="text-danger" > Error : 
+                                <?php echo($error_message); ?>
+                            </span>
+                        </div>
+                    <?php endif; ?>
+
                     <h2>Available Courses</h2>
                     <table id="table" class="table table-hover table-bordered">
                         <thead>	
                             <tr>
-                                <th>Course</th>
-                                <th>Department</th>
-                                <th>Level</th>
-                                <th>Credits</th>
-                                <th>Course Fee</th>
-                                <th>View</th>
-                                <th>Register</th>
+                                <th class="text-center">Course</th>
+                                <th class="text-center">Department</th>
+                                <th class="text-center">Level</th>
+                                <th class="text-center">Credits</th>
+                                <th class="text-center">Course Fee</th>
+                                <th class="text-center">View</th>
+                                <th class="text-center">Register</th>
                             </tr>
                         </thead>
                         <?php
@@ -458,7 +447,7 @@ if (count($condition) > 0) {
                                 credits
                             FROM courses 
                             
-                            $where_clause";
+                            $where_clause ORDER BY level";
 
                         $result = $conn->query($sql);
                         ?>
@@ -468,58 +457,55 @@ if (count($condition) > 0) {
 
                             echo "<td>" . $row['course_code'] . " - " . $row['course_name'] . "</td>";
                             echo "<td>" . $row['department'] . "</td>";
-                            echo "<td>" . $row['level'] . "</td>";
-                            echo "<td>" . $row['credits'] . "</td>";
-                            echo "<td>" .  number_format(calc_course_fee($row['level'], $row['credits']), 2) . "</td>";
-                            echo "<td> <a href='coursesedit.php?course_code=" . $row['course_code'] . "'>view</a></td>";
+                            echo "<td class='text-center'>" . $row['level'] . "</td>";
+                            echo "<td class='text-center'>" . $row['credits'] . "</td>";
+                            echo "<td class='text-center'>" . number_format(calc_course_fee($row['level'], $row['credits']), 2) . "</td>";
+                            echo "<td class='text-center'> <a href='requisitecoursesstu.php?course_code=" . $row['course_code'] . "'>More Info</a></td>";
                             ?>
-                           <td> 
-                               <form  method="POST">
-                                   <input type="hidden" name="course" value="<?php echo($row['course_code']); ?>" />
-                                   <input type="hidden" name="year" value="<?php echo($registration_year ); ?>" />
-                                   <input type="hidden" name="fee" value="<?php echo(calc_course_fee($row['level'], $row['credits']) ); ?>" />
-                                   <input class='btn btn-sm btn-success' name="register" type="submit" value="Register" />
-                               </form>
-                           </td>
-                           <?php
-
+                            <td> 
+                                <form  method="POST">
+                                    <input type="hidden" name="course" value="<?php echo($row['course_code']); ?>" />
+                                    <input type="hidden" name="year" value="<?php echo($registration_year ); ?>" />
+                                    <input type="hidden" name="fee" value="<?php echo(calc_course_fee($row['level'], $row['credits']) ); ?>" />
+                                    <input class='btn btn-sm btn-success center-block' name="register" type="submit" value="Register" />
+                                </form>
+                            </td>
+                            <?php
                             echo "</tr>";
                         }
                         ?>
 
                     </table>
                     <h2>Registered Courses</h2>
-                     <table id="table" class="table table-hover table-bordered">
+                    <table id="table" class="table table-hover table-bordered">
                         <thead>	
                             <tr>
-                                <th>Course</th>
-                                <th>Department</th>
-                                <th>Level</th>
-                                <th>Credits</th>
-                                <th>Course Fee</th>
-                                <th>Deregister</th>
+                                <th class="text-center">Course</th>
+                                <th class="text-center">Department</th>
+                                <th class="text-center">Level</th>
+                                <th class="text-center">Credits</th>
+                                <th class="text-center">Course Fee</th>
+                                <th class="text-center">Deregister</th>
                             </tr>
                         </thead>
-                        <?php
-
-                        ?>
+                        <?php ?>
                         <?php
                         foreach ($registeredCourses as $row) {
                             echo "<tr>";
 
                             echo "<td>" . $row['course_code'] . " - " . $row['course_name'] . "</td>";
                             echo "<td>" . $row['department'] . "</td>";
-                            echo "<td>" . $row['level'] . "</td>";
-                            echo "<td>" . $row['credits'] . "</td>";
-                            echo "<td>" . number_format($row['course_fee'],2) . "</td>";
+                            echo "<td class='text-center'>" . $row['level'] . "</td>";
+                            echo "<td class='text-center'>" . $row['credits'] . "</td>";
+                            echo "<td class='text-center'>" . number_format($row['course_fee'], 2) . "</td>";
                             ?>
                             <td>
-                               <form  method="POST">
-                                   <input type="hidden" name="course" value="<?php echo($row['course_code']); ?>" />
-                                   <input type="hidden" name="year" value="<?php echo($registration_year ); ?>" />
-                                   <input class='btn btn-sm btn-warning' name="deregister" type="submit" value="Deregister" />
-                               </form>
-                           </td>
+                                <form  method="POST">
+                                    <input type="hidden" name="course" value="<?php echo($row['course_code']); ?>" />
+                                    <input type="hidden" name="year" value="<?php echo($registration_year ); ?>" />
+                                    <input class='btn btn-sm btn-warning center-block' name="deregister" type="submit" value="Deregister" />
+                                </form>
+                            </td>
                             <?php
                             echo "</tr>";
                         }

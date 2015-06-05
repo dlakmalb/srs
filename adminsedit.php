@@ -1,6 +1,8 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?>
 <?php
 // fill fields
@@ -34,7 +36,13 @@ if (isset($_POST['update'])):
     $gender = ($_POST['radiogender']);
     $telephone = ($_POST['inputtelephone']);
     $email = ($_POST['inputemail']);
-    $password = ($_POST['inputpassword']);
+//    $password = ($_POST['inputpassword']);
+    $password_update = "";
+    if (isset($_POST['inputpassword']) && strlen($_POST['inputpassword']) > 0) {
+        $password = ($_POST['inputpassword']);
+        $password_hash = md5($password);
+        $password_update = " , password='$password_hash' ";
+    }
 
     $sql = "UPDATE admins
             SET admin_id = '$id',
@@ -42,17 +50,15 @@ if (isset($_POST['update'])):
                 address = '$address',
                 gender = '$gender',
                 email = '$email',                
-                telephone = '$telephone',
-                password = '$password'
+                telephone = '$telephone' ".$password_update. "
             WHERE admin_id = '$id'";
 
     $result = $conn->query($sql);
-    if ($result && $conn->affected_rows > 0) {
+    if ($result) {
         header("Location: admins.php");
         exit;
     } else {
-        header("Location: admins.php");
-        exit;
+        $error_message = $conn->error();
     }
 endif;
 ?>
@@ -71,14 +77,22 @@ endif;
                             </h1>
                         </div>
                     </div>
+                    
+                     <!-- Error Message -->
+                    <?php if(isset($error_message)): ?>
+                    <div class="well">
+                        <?php echo($error_message); ?>
+                    </div>
+                     
+                    <?php endif; ?>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-2">
-                            <form class="form-horizontal" action="" method="POST">
+                            <form class="form-horizontal" action="" method="POST" onsubmit="return checkPassword()">
                                 <fieldset>
                                     <div class="form-group">
                                         <label for="inputadminid" class="col-lg-3 control-label">ID</label>
                                         <div class="col-lg-9">
-                                            <input value= "<?php echo ($_GET["admin_id"])?>" readonly="" required='required' class="form-control input-sm textBorder" id="inputadminid" name="inputadminid" placeholder="Administrator ID" type="text">
+                                            <input value= "<?php echo ($_GET["admin_id"]) ?>" readonly="" required='required' class="form-control input-sm textBorder" id="inputadminid" name="inputadminid" placeholder="Administrator ID" type="text">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -112,16 +126,19 @@ endif;
                                             <input value = "<?php echo ($email) ?>" required='required' class="form-control input-sm textBorder" id="inputemail" name="inputemail" placeholder="Email" type="text">
                                         </div>
                                     </div>
+                                    <div>
+                                        Leave password fields empty if you do not want to change the password
+                                    </div><br>
                                     <div class="form-group">
                                         <label for="inputpassword" class="col-lg-3 control-label">Password</label>
                                         <div class="col-lg-9">
-                                            <input value = "<?php echo ($password) ?>" required='required' class="form-control input-sm textBorder" id="inputpassword" name="inputpassword" placeholder="Password" type="password">
+                                            <input value = "" class="form-control input-sm textBorder" id="inputpassword" name="inputpassword" placeholder="Password" type="password">
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="inputpasswordconfirm" class="col-lg-3 control-label">Confirm</label>
                                         <div class="col-lg-9">
-                                            <input value = "<?php echo ($password) ?>" required='required' class="form-control input-sm textBorder" id="inputpasswordconfirm" name="inputpasswordconfirm" placeholder="Confirm Password" type="password">
+                                            <input value = "" class="form-control input-sm textBorder" id="inputpasswordconfirm" name="inputpasswordconfirm" placeholder="Confirm Password" type="password">
                                         </div>
                                     </div>
                                     <div class="form-group">

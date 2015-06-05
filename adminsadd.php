@@ -1,6 +1,8 @@
 <?php
 require_once("dbconnection.php");
 require_once("headeradmin.php");
+require_once("loginRequired.php");
+adminLoginRequired();
 ?>
 <?php
 // get user inputs
@@ -11,10 +13,10 @@ if (isset($_POST['register'])):
     $gender = ($_POST['radiogender']);
     $telephone = ($_POST['inputtelephone']);
     $email = ($_POST['inputemail']);
-    $Password = ($_POST['inputpassword']);
+    $password = ($_POST['inputpassword']);
 
     $sql = "INSERT INTO admins (admin_id, name, address, gender, email, telephone, password)
-            VALUES('" . $id . "', '" . $name . "',  '" . $address . "', '" . $gender . "', '" . $email . "', '" . $telephone . "', '" . $Password . "')";
+            VALUES('" . $id . "', '" . $name . "',  '" . $address . "', '" . $gender . "', '" . $email . "', '" . $telephone . "', md5('" . $password . "'))";
 
     $result = $conn->query($sql);
     if ($result && $conn->affected_rows > 0) {
@@ -44,7 +46,7 @@ endif;
                     </div>
                     <div class="row">
                         <div class="col-md-6 col-md-offset-2">
-                            <form class="form-horizontal" action="" method="POST">
+                            <form class="form-horizontal" action="" method="POST" onsubmit="return checkPassword()">
                                 <fieldset>
                                     <div class="form-group">
                                         <label for="inputadminid" class="col-lg-3 control-label">ID</label>

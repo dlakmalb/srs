@@ -1,15 +1,14 @@
 <?php
 require_once("dbconnection.php");
 require_once("loginRequired.php");
-studentLoginRequired();
+lecturerLoginRequired();
 ?>
 <?php
-$stud_id = $_SESSION["STUDENT_ID"];
-$sql = "SELECT name FROM students WHERE student_id = '$stud_id'";
+$lec_id = $_SESSION["LECTURER_ID"];
+$sql = "SELECT name FROM lecturers WHERE lecturer_id = '$lec_id'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_array($result, MYSQLI_BOTH);
 $navbar_username = $row['name'];
-
 
 function add_nav($active = "") {
     global $navbar_username;
@@ -23,7 +22,7 @@ function add_nav($active = "") {
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <lable class="navbar-brand"  >Student Registration System</lable>
+            <lable class="navbar-brand">Student Registration System</lable>
         </div>
         <!-- Top Menu Items -->
         <ul class="nav navbar-right top-nav">
@@ -39,24 +38,27 @@ function add_nav($active = "") {
         <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
         <div class="collapse navbar-collapse navbar-ex1-collapse">
             <ul class="nav navbar-nav side-nav">
-                <li <?php if($active == 'home' || $active == ''){ echo('class="active"');} ?> >
-                    <a href="homestu.php"><i class="fa fa-fw fa-home"></i> Student Panel</a>
+                <li <?php if ($active == 'home' || $active == '') { echo('class="active"');}?> >
+                    <a href="homelec.php"><i class="fa fa-fw fa-home"></i> Lecturer Panel</a>
                 </li>
-                <li <?php if($active == 'profile'){ echo('class="active"');} ?> >
-                    <a href="profilestu.php"><i class="fa fa-fw fa-user"></i> My Profile</a>
+                <li <?php if ($active == 'profile') { echo('class="active"');} ?> >
+                    <a href="profilelec.php"><i class="fa fa-fw fa-users"></i> My Profile</a>
                 </li>
-                <li <?php if($active == 'program'){ echo('class="active"');} ?> >
-                    <a href="programstu.php"><i class="fa fa-fw fa-book"></i> My Programmes</a>
-                </li>
-                <li <?php if($active == 'courseregistration'){ echo('class="active"');} ?> >
-                    <a href="coursesregstu.php"><i class="fa fa-fw fa-user-plus"></i> Courses Registration</a>
-                </li>
+                <li <?php if ($active == 'stuinfolec') { echo('class="active"');}?> >
+                    <a href="studentsinfolec.php"><i class="fa fa-fw fa-book"></i> Student's Information</a>
+                </li>  
+                <li <?php if ($active == 'resultsinfolec') {echo('class="active"'); }?> >
+                    <a href="resultsinfolec.php"><i class="fa fa-fw fa-bar-chart-o"></i> Results Information</a>
+                </li>                
                 <li <?php if($active == 'comcourses'){ echo('class="active"');} ?> >
-                    <a href="compulsorycoursesstu.php"><i class="fa fa-fw fa-info-circle"></i> Compulsory Courses</a>
+                    <a href="compulsorycourseslec.php"><i class="fa fa-fw fa-info-circle"></i> Compulsory Courses</a>
+                </li>                
+                <li <?php if($active == 'letter'){ echo('class="active"');} ?> >
+                    <a href="compulsorycourseslec.php"><i class="fa fa-fw fa-envelope"></i> Request Letters</a>
                 </li>
             </ul>
         </div>
-       
+        <!-- /.navbar-collapse -->
     </nav>
 <?php }
 ?>
